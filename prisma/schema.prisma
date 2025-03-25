@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Өвс тэжээл, эмчилгээ, малын бүртгэл, тоо толгой өгөгдлийн санд хадгалагдана.
+enum FodderType {
+  uvs
+  tejeel
+}
+
+enum Sex {
+  M
+  F
+  Father
+}
+
+enum StockType {
+  sheep
+  goat
+  horse
+  camel
+  cattle
+}
+
+enum EventType {
+  dec
+  inc
+}
+
+enum DamType {
+  heeltei
+  tullusun
+  suwai
+}
+
+model Herder {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(50)
+  password String  @db.VarChar(20)
+  phone    String  @unique
+  fodders  FodderStock[] // one-to-many relationship
+  livestock LiveStock[]
+}
+
+model FodderStock {
+  id       Int         @id @default(autoincrement())
+  types    FodderType
+  owner_id Int
+  owner    Herder        @relation(fields: [owner_id], references: [id]) // Relationship to Herder model
+  records  FodderRecord[]
+  purchase FodderPurchase[]
+}
+
+model FodderRecord {
+  id          Int         @id @default(autoincrement())
+  fodder_id   Int
+  quantity_used Int
+  used_date   DateTime
+  fodder      FodderStock @relation(fields: [fodder_id], references: [id])
+}
+
+model FodderPurchase {
+  id        Int         @id @default(autoincrement())
+  fodder_id Int
+  weight    Float?
+  counts    Int?
+  buy_date  DateTime
+  fodder    FodderStock @relation(fields: [fodder_id], references: [id])
+}
+
+model LiveStock {
+  id         Int        @id @default(autoincrement())
+  owner_id   Int
+  stock_type StockType
+  age        Int?
+  color      String?
+  gender     Sex?
+  counts     Int
+  owner      Herder       @relation(fields: [owner_id], references: [id])
+  events     EventRecord[]
+  medicals   MedicalRecord[]
+  sire       Sire[]
+  dam        Dam[]
+}
+
+model EventRecord {
+  id         Int        @id @default(autoincrement())
+  stock_id   Int
+  event_type EventType
+  counts     Int
+  descrip    String?     @db.VarChar(100)
+  event_date DateTime?
+  stock      LiveStock  @relation(fields: [stock_id], references: [id])
+}
+
+model MedicalRecord {
+  id           Int        @id @default(autoincrement())
+  stock_id     Int
+  treatment_name String
+  counts       Int
+  descrip      String?    @db.VarChar(100)
+  freq_date    DateTime?
+  stock        LiveStock  @relation(fields: [stock_id], references: [id])
+}
+
+model Sire {
+  id       Int        @id @default(autoincrement())
+  stock_id Int
+  breed    String // Uulder
+  weight   Int?
+  dam Dam[]
+  stock    LiveStock @relation(fields: [stock_id], references: [id])
+}
+
+model Dam {
+  id           Int        @id @default(autoincrement())
+  stock_id     Int
+  sire_id      Int
+  dam_type     DamType
+  calving_date DateTime?
+  stock        LiveStock @relation(fields: [stock_id], references: [id])
+  sire         Sire      @relation(fields: [sire_id], references: [id])
+}
