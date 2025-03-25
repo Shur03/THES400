@@ -1,5 +1,7 @@
 "use client";
-import FodderList from "@/components/page/Fodder/FodderList";
+
+import FodderChart from "@/components/charts/FodderChart";
+import FodderList from "@/components/lists/FodderList";
 // import { useRouter } from "next/router";
 import { useRouter } from "next/navigation";
 import {
@@ -21,15 +23,8 @@ export default function Index() {
       <div className="col-sm-6 col-lg-4 bg-blue-300 text-gray-900 d">
         <Card>
           <CardBody className="pb-0 d-flex justify-content-between align-items-start">
-            <div>
-              <div>Үлдэгдэл</div>
-              <div className="fs-4 fw-semibold">
-                200
-                {/* <span className="fs-6 ms-2 fw-normal">
-            (40.9%
-            <FontAwesomeIcon icon={faArrowUp} fixedWidth />)
-          </span> */}
-              </div>
+            <div className="h-1/2 rounded-lg">
+              <FodderChart />
             </div>
             <Dropdown align="end">
               <DropdownToggle
@@ -54,13 +49,13 @@ export default function Index() {
         </Card>
       </div>
       <CardBody>
-        <div className="mb-3 text-end">
+        <div className="mb-3 text-end pt-5">
           <Button
             variant="success"
-            className="text-white bg-green-400"
+            className="text-white bg-green-400 rounded-lg p-2 "
             onClick={() => router.push("/fodder/create")}
           >
-            + Шинээр нэмэх
+            + Бүртгэл нэмэх
           </Button>
         </div>
 

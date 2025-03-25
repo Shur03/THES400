@@ -1,6 +1,6 @@
 "use client";
-import StockChart from "@/components/page/dashboard/StockChart";
-import WeatherChart from "@/components/page/dashboard/WeatherChart";
+import StockChart from "@/components/charts/StockChart";
+import WeatherChart from "@/components/charts/WeatherChart";
 import axios from "axios";
 import { useEffect, useState } from "react";
 

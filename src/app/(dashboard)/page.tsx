@@ -1,4 +1,4 @@
-import StockChart from "@/components/page/dashboard/StockChart";
+import StockChart from "@/components/charts/StockChart";
 
 export default function Dashboard() {
   const data = [

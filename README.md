@@ -4,6 +4,7 @@
 1. git clone https://github.com/Shur03/THES400.git
 2. npm install
 3. npm run dev
+
    Ашигласан технологиуд :
 
 - Nextjs 15

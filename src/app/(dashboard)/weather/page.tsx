@@ -2,7 +2,7 @@
 import Head from "next/head";
 import axios from "axios";
 import { useState } from "react";
-import WeatherChart from "@/components/page/dashboard/WeatherChart";
+import WeatherChart from "@/components/charts/WeatherChart";
 
 export default function Page() {
   //   const [city, setCity] = useState("");
