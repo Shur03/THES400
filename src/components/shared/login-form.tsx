@@ -15,8 +15,7 @@ export default function LoginForm() {
   );
 
   // if (errorMessage?.success) {
-  //   router.push("/dashboard"); // Redirect to dashboard if login is successful
-  // }
+  //   router.push("/dashboard");
 
   return (
     <form action={formAction}>

@@ -75,7 +75,7 @@ export default function FodderForm(props: Props) {
 
       {fodder && (
         <div
-          className="position-relative mx-auto"
+          className="position-relative mx-5"
           style={{
             width: "150px",
             height: "150px",

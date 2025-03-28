@@ -12,8 +12,8 @@ export default function LoginPage() {
             <AppLogo />
           </CardHeader> */}
           {/* <CardContent className="space-y-4"> */}
-          {/* <LoginForm /> */}
-          <Dashboard />
+          <LoginForm />
+          {/* <Dashboard /> */}
           {/* </CardContent> */}
         </Card>
       </main>

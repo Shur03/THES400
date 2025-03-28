@@ -1,6 +1,7 @@
 "use client";
 import StockChart from "@/components/charts/StockChart";
 import WeatherChart from "@/components/charts/WeatherChart";
+import Footer from "@/components/footer/Footer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -41,7 +42,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
         {data.map((item, index) => (
           <div
             key={index}
@@ -65,6 +66,7 @@ export default function Dashboard() {
         {error && <p className="text-red-500 text-center">{error}</p>}
         {weather && <WeatherChart data={weather} />}
       </div>
+      <Footer />
     </div>
   );
 }

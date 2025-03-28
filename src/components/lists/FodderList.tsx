@@ -7,7 +7,7 @@ import {
 } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import THSort from "@/components/TableSort/THSort";
+import THSort from "@/components/tableSort/THSort";
 import { FodderStock } from "@/models/Fodder";
 
 export default function FodderList() {

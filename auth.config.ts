@@ -5,8 +5,7 @@ export const authConfig = {
     signIn: '/login',
   },
   providers: [
-    // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
-    // while this file is also used in non-Node.js environments
+    
   ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
@@ -16,7 +15,6 @@ export const authConfig = {
         if (isLoggedIn)  return true
         return false 
       } else if (isLoggedIn) {
-        console.log('Redirecting to dashboard...');
         return Response.redirect(new URL('/dashboard', nextUrl))
         
       }
