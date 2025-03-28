@@ -11,6 +11,8 @@
 - TailwindCss
 - prisma
 - Typescript
+
   Ашигласан API ;
+
 - openweather API https://openweathermap.org/
 - spotter API https://smartspotter.net/
