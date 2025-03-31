@@ -10,8 +10,8 @@ export default async function Dashboard() {
     { title: "Морь", value: "39" },
     { title: "Тэмээ", value: "10" },
   ];
-  const session = await auth();
-  if (!session) redirect("/sign-in");
+  // const session = await auth();
+  // if (!session) redirect("/sign-in");
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {data.map((item, index) => (

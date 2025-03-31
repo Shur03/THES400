@@ -185,12 +185,12 @@ export default function Login({ callbackUrl }: { callbackUrl: string }) {
           aria-live="polite"
           aria-atomic="true"
         >
-          {errorMessage && (
+          {/* {errorMessage && (
             <>
               <CircleAlert className="h-5 w-5 text-red-500" />
               <p className="text-sm text-red-500">{errorMessage}</p>
             </>
-          )}
+          )} */}
         </div>
       </div>
     </form>
