@@ -17,9 +17,13 @@ password :'$2b$10$3'
   password :'1234567'
   }
 ]
-// const fodder : Prisma.FodderCreateInput[] = [{
+const fodderData : Prisma.FodderStockCreateInput = [
+  {
+types : 'uvs',
+owner_id : '1',
 
-// }]
+  }
+]
 export async function main() {
   for (const u of userData) {
     await prisma.user.create({ data: u })

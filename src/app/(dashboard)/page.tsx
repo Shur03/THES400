@@ -1,6 +1,8 @@
 import StockChart from "@/components/charts/StockChart";
+import { auth } from "../../../lib/auth";
+import { redirect } from "next/navigation";
 
-export default function Dashboard() {
+export default async function Dashboard() {
   const data = [
     { title: "Хонь", value: "300" },
     { title: "Ямаа", value: "500" },
@@ -8,7 +10,8 @@ export default function Dashboard() {
     { title: "Морь", value: "39" },
     { title: "Тэмээ", value: "10" },
   ];
-
+  const session = await auth();
+  if (!session) redirect("/sign-in");
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {data.map((item, index) => (

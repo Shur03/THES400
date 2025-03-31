@@ -11,22 +11,19 @@ import {
   FormGroup,
   FormLabel,
   Row,
+  Form,
 } from "react-bootstrap";
-import React, { useActionState, useEffect } from "react";
-import classNames from "classnames";
-import Image from "next/image";
-import FormCheckInput from "react-bootstrap/FormCheckInput";
-import FormCheckLabel from "react-bootstrap/FormCheckLabel";
+import React, { useActionState, useEffect, useState } from "react";
 
 import { FodderStock } from "@/models/Fodder";
 import { FodderType } from "@/models/enum";
 import create from "@/app/(dashboard)/fodder/create/action";
 
 type Props = {
-  types: FodderType[];
-  fodder?: FodderStock;
+  fodder?: {
+    types: FodderType;
+  };
 };
-
 const SubmitButton = () => {
   const { pending } = useActionState();
 
@@ -58,13 +55,17 @@ export default function FodderForm(props: Props) {
       window.scrollTo(0, 0);
     }
   }, [state]);
+  const [selectedType, setSelectedType] = useState("");
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedType(event.target.value);
+  };
   return (
     <BSForm
       noValidate
       key={state.formKey}
       action={formAction}
-      className="mb-3 text-gray-800"
+      className="mb-3 mx-5 text-gray-800"
     >
       <Alert
         variant={state.success ? "success" : "danger"}
@@ -72,38 +73,22 @@ export default function FodderForm(props: Props) {
       >
         {state.message}
       </Alert>
-
-      {fodder && (
-        <div
-          className="position-relative mx-5"
-          style={{
-            width: "150px",
-            height: "150px",
-          }}
-        ></div>
-      )}
-
-      <FormGroup className="mb-3">
-        <FormLabel>Нэр</FormLabel>
-        <FormControl
-          type="text"
-          name="name"
-          defaultValue={fodder?.name}
-          isInvalid={!!state.errors?.name}
-          required
-        />
-        {/* <FormError messages={state.errors?.name} /> */}
-      </FormGroup>
-
-      <FormGroup className="mb-3">
-        <h1>sk </h1>
-        <FormLabel>Төрөл</FormLabel>
-        <div className={classNames({ "is-invalid": !!state.errors?.types })}>
-          <Row></Row>
+      <FormGroup>
+        <FormLabel>Төрөл сонгох:</FormLabel>
+        <div>
+          {fodder?.types.map((type, index) => (
+            <Form.Check
+              key={index}
+              type="radio"
+              label={type}
+              name="type"
+              value={type.toLowerCase().replace(/\s+/g, "")}
+              checked={selectedType === type.toLowerCase().replace(/\s+/g, "")}
+              onChange={handleChange}
+            />
+          ))}
         </div>
-        {/* <FormError messages={state.errors?.types} /> */}
       </FormGroup>
-
       <FormGroup className="mb-3">
         <FormLabel>Тоо ширхэг</FormLabel>
         <FormControl
