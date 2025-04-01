@@ -14,7 +14,7 @@ class Item {
 }
 
 export default function Calculator() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [needAmount, setNeedAmount] = useState("");
 
   const totalAmount = items.reduce(
@@ -29,13 +29,17 @@ export default function Calculator() {
     setItems([...items, new Item()]);
   };
 
-  const updateItem = (index, field, value) => {
+  const updateItem = (index: number, field: keyof Item, value: string) => {
     const newItems = [...items];
-    newItems[index][field] = field === "name" ? value : parseFloat(value) || 0;
+    if (field === "name") {
+      newItems[index][field] = value;
+    } else {
+      newItems[index][field] = parseFloat(value) || 0;
+    }
     setItems(newItems);
   };
 
-  const removeItem = (index) => {
+  const removeItem = (index: number) => {
     setItems(items.filter((_, i) => i !== index));
   };
 
@@ -128,7 +132,9 @@ export default function Calculator() {
               <h1 className="font-bold">Шаардлагатай</h1>
 
               <p className="text-2xl">
-                {needAmount > 0 ? `${needAmount.toLocaleString()}` : "0"}
+                {parseFloat(needAmount) > 0
+                  ? `${parseFloat(needAmount).toLocaleString()}`
+                  : "0"}
               </p>
             </div>
           </div>
