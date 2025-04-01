@@ -18,11 +18,32 @@ export default function Dashboard() {
 
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const city = "Ulaanbaatar"; // Fixed city for weather display
 
   const { data: session, status } = useSession();
+
+  // ✅ Move useEffect to the top level before any early return
+  useEffect(() => {
+    const fetchWeather = async () => {
+      setLoading(true);
+      setError(null);
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`;
+
+      try {
+        const response = await axios.get(url);
+        setWeather(response.data);
+      } catch {
+        setError("Алдаа гарлаа. Дахин оролдоно уу.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -36,25 +57,7 @@ export default function Dashboard() {
       </div>
     );
   }
-  useEffect(() => {
-    const fetchWeather = async () => {
-      setLoading(true);
-      setError(null);
 
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`;
-
-      try {
-        const response = await axios.get(url);
-        setWeather(response.data);
-      } catch (err) {
-        setError("Алдаа гарлаа. Дахин оролдоно уу.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeather();
-  }, []);
   return (
     <div>
       <Header username={session.user?.name || "Guest"} />

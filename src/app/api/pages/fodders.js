@@ -1,4 +1,3 @@
-// pages/api/fodder.js
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -9,6 +8,7 @@ export default async function handler(req, res) {
       const fodders = await prisma.fodder.findMany();
       res.json(fodders);
     } catch (error) {
+      console.error("Error fetching fodder data:", error); // ✅ Log the error
       res.status(500).json({ error: "Error fetching fodder data" });
     }
   }
