@@ -57,7 +57,7 @@ export default function Dashboard() {
   }, []);
   return (
     <div>
-      <Header username={session.user?.name || ""} />
+      {/* <Header username={session.user?.name || ""} /> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
         <p className="text-gray-900 mt-5">Hi, {session.user?.name}</p>
         <button onClick={() => signOut()}>Sign Out</button>

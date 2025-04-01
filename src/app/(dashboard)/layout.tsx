@@ -1,10 +1,9 @@
 "use client";
-import Header from "@/components/header/Header";
 import SideNav from "@/components/shared/dashboard/sidenav";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   if (!session) {
     return (
       <div>

@@ -23,9 +23,7 @@ export default function Form({ fodderList }: Props) {
     used_date: "",
   });
 
-  const [selectedFodder, setSelectedFodder] = useState<FodderStock | null>(
-    null
-  );
+  const [setSelectedFodder] = useState<FodderStock | null>(null);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 

@@ -26,9 +26,7 @@ export default function PurchaseForm({ fodderList }: Props) {
     price: "",
   });
 
-  const [selectedFodder, setSelectedFodder] = useState<FodderStock | null>(
-    null
-  );
+  const [setSelectedFodder] = useState<FodderStock | null>(null);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 

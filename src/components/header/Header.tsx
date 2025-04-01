@@ -2,15 +2,12 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
 interface HeaderProps {
   username: string;
 }
 
 export default function Header(username: HeaderProps) {
   const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header className=" text-gray-900 p-4 shadow-md">

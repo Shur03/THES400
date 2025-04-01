@@ -2,11 +2,7 @@ import { Col, Row } from "react-bootstrap";
 import { SearchParams } from "@/types/next";
 import Login from "@/app/(authentication)/login/login";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+export default async function Page() {
   // const session = await auth();
   // if(session) redirect('/');
   return (

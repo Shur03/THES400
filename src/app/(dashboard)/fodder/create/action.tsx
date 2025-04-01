@@ -1,17 +1,5 @@
-import { format } from "path";
-import { coerce, z } from "zod";
+import { z } from "zod";
 
-const ZodAttribute = z
-  .string()
-  .min(1)
-  .pipe(
-    z
-      .number({
-        coerce: true,
-      })
-      .min(0)
-      .max(255)
-  );
 const schema = z.object({
   type: z.string().min(3).max(255),
   quamtity_used: z.number().min(0).max(255),
