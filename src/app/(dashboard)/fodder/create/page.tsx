@@ -29,17 +29,22 @@ export default function Page() {
           {/* Dropdown to select form type */}
           <FormGroup className="mb-3">
             <FormLabel>Мэдээллийн төрөл сонгох</FormLabel>
-            <FormControl as="select" value={formType} onChange={handleChange}>
+            <select
+              className="form-control"
+              value={formType}
+              onChange={handleChange}
+            >
               <option value="purchase">Худалдан авалт (Purchase)</option>
               <option value="records">Бүртгэл (Records)</option>
-            </FormControl>
+            </select>
           </FormGroup>
 
           {/* Conditionally render the selected form */}
           {formType === "purchase" ? (
             <PurchaseForm fodderList={[]} />
           ) : (
-            <RecordForm fodderList={[]} />
+            // <RecordForm fodderList={[]} />
+            <h1>Record</h1>
           )}
         </CardBody>
       </Card>
