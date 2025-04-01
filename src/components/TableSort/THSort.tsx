@@ -46,7 +46,6 @@ export default function THSort(props: Props) {
       onKeyDown={onClick}
     >
       {children}
-      <FontAwesomeIcon icon={getIcon()} fixedWidth size="xs" />
     </a>
   );
 }

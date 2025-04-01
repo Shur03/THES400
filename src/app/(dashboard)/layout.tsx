@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <SideNav />
       </div>
 
-      <Header username={session.user?.name || "Guest"} />
+      {/* <Header username={session.user?.name } /> */}
       <div className="grow p-6 md:overflow-y-auto bg-white">{children}</div>
     </div>
   );
