@@ -1,6 +1,6 @@
 "use client";
 import StockChart from "@/components/charts/StockChart";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import WeatherChart from "@/components/charts/WeatherChart";
 import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
@@ -84,11 +84,4 @@ export default function Dashboard() {
       <Footer />
     </div>
   );
-}
-function setLoading(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
-
-function setError(arg0: null) {
-  throw new Error("Function not implemented.");
 }
