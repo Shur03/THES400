@@ -54,3 +54,47 @@ export default function NavLinks() {
     </>
   );
 }
+/**  {isOpen && (
+        <div className="md:hidden bg-blue-700 p-4 flex flex-col space-y-2">
+          <Link
+            href="/dashboard"
+            className="hover:underline"
+            onClick={() => setIsOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/about"
+            className="hover:underline"
+            onClick={() => setIsOpen(false)}
+          >
+            About
+          </Link>
+          <Link
+            href="/contact"
+            className="hover:underline"
+            onClick={() => setIsOpen(false)}
+          >
+            Contact
+          </Link>
+          {session ? (
+            <button
+              onClick={() => {
+                signOut();
+                setIsOpen(false);
+              }}
+              className="hover:underline"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              href="/auth/signin"
+              className="hover:underline"
+              onClick={() => setIsOpen(false)}
+            >
+              Login
+            </Link>
+          )}
+        </div>
+      )} */

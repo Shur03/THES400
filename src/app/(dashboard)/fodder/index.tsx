@@ -1,6 +1,8 @@
 "use client";
 
 import FodderChart from "@/components/charts/FodderChart";
+import Footer from "@/components/footer/Footer";
+import Header from "@/components/header/Header";
 import FodderList from "@/components/lists/FodderList";
 // import { useRouter } from "next/router";
 import { useRouter } from "next/navigation";
@@ -17,8 +19,10 @@ import {
 export default function Index() {
   const router = useRouter();
   /* <FodderChart/>  */
+  const username = "Shur";
   return (
     <Card>
+      <Header username={username} />
       <Card.Header>Fodder List</Card.Header>
       <div className="col-sm-6 col-lg-4 bg-blue-300 text-gray-900 d">
         <Card>
@@ -61,6 +65,7 @@ export default function Index() {
 
         <FodderList />
       </CardBody>
+      <Footer />
     </Card>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 import StockChart from "@/components/charts/StockChart";
+import { signIn, signOut, useSession } from "next-auth/react";
 import WeatherChart from "@/components/charts/WeatherChart";
 import Footer from "@/components/footer/Footer";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
   const data = [
@@ -20,6 +21,20 @@ export default function Dashboard() {
 
   const city = "Ulaanbaatar"; // Fixed city for weather display
 
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (!session) {
+    return (
+      <div>
+        <p>Нэвтэрнэ үү.</p>
+        <button onClick={() => signIn()}>Нэвтрэх</button>
+      </div>
+    );
+  }
   useEffect(() => {
     const fetchWeather = async () => {
       setLoading(true);
@@ -39,10 +54,12 @@ export default function Dashboard() {
 
     fetchWeather();
   }, []);
-
   return (
     <div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+      {/* <Header /> */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+        <p className="text-gray-900 mt-5">Hi, {session.user?.name}</p>
+        <button onClick={() => signOut()}>Sign Out</button>
         {data.map((item, index) => (
           <div
             key={index}
@@ -60,13 +77,19 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-
-      <div className="px-5 w-full text-gray-800 rounded-lg">
+      {/* <div className="px-5 w-full text-gray-800 rounded-lg">
         {loading && <p className="text-white text-center">Уншиж байна...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
         {weather && <WeatherChart data={weather} />}
-      </div>
+      </div> */}
       <Footer />
     </div>
   );
+}
+function setLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+
+function setError(arg0: null) {
+  throw new Error("Function not implemented.");
 }

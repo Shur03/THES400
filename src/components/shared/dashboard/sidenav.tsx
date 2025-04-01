@@ -2,7 +2,7 @@ import { PowerIcon } from "lucide-react";
 import { Button } from "../../ui/button";
 import ModeToggle from "./mode-toggle";
 import NavLinks from "./nav-links";
-import { signOut } from "../../../../auth";
+// import { signOut } from "../../../../auth";
 
 export default function SideNav() {
   return (

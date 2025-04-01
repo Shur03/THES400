@@ -126,3 +126,10 @@ model Dam {
   stock        LiveStock @relation(fields: [stock_id], references: [id])
   sire         Sire      @relation(fields: [sire_id], references: [id])
 }
+
+model User {
+  id       String @id @default(cuid())
+  phone    String @unique
+  password String
+  name     String?
+}
