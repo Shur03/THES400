@@ -1,7 +1,6 @@
 "use client";
 import { Trash } from "lucide-react";
 import { useState } from "react";
-import { number, string } from "zod";
 
 class Item {
   name: string;

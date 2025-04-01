@@ -10,7 +10,6 @@ import {
   FormLabel,
 } from "react-bootstrap";
 import { FodderStock } from "@/models/Fodder";
-import { FodderType } from "@/models/enum";
 import create from "@/app/(dashboard)/fodder/create/action";
 
 type Props = {

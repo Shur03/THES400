@@ -1,36 +1,32 @@
 "use client";
 
-import {
-  Button,
-} from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import {  AtSign, CircleAlert, LockKeyhole } from "lucide-react";
-import { auth } from "../../../../lib/auth";
+import { AtSign, CircleAlert, LockKeyhole } from "lucide-react";
 import { executeAction } from "../../../../lib/executeAction";
 
-export default function Login({ callbackUrl }: { callbackUrl: string }) {
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-
+export default function Login() {
+  const [submitting] = useState(false);
+  const [error] = useState("");
 
   return (
-    <form action={async(formData: FormData)=> {
-      // "use server";
-      await executeAction({
-        actionFn: async() => {
-          await signIn('credentials', {
-            phone: formData.get('phone'),
-            password: formData.get('password'),
-            redirect: true,
-            callbackUrl: '/dashboard'
-          })
-        }
-      })
-    }}>
+    <form
+      action={async (formData: FormData) => {
+        // "use server";
+        await executeAction({
+          actionFn: async () => {
+            await signIn("credentials", {
+              phone: formData.get("phone"),
+              password: formData.get("password"),
+              redirect: true,
+              callbackUrl: "/dashboard",
+            });
+          },
+        });
+      }}
+    >
       <div className="flex-1 rounded-lg px-6 pb-4 pt-8">
         <div>
           <label
@@ -88,7 +84,11 @@ export default function Login({ callbackUrl }: { callbackUrl: string }) {
         </div>
 
         {error && (
-          <div className="flex h-8 items-end space-x-1" aria-live="polite" aria-atomic="true">
+          <div
+            className="flex h-8 items-end space-x-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <CircleAlert className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-500">{error}</p>
           </div>

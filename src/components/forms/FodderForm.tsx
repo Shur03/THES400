@@ -4,18 +4,15 @@
 import {
   Alert,
   Button,
-  Col,
   Form as BSForm,
-  FormCheck,
   FormControl,
   FormGroup,
   FormLabel,
-  Row,
   Form,
 } from "react-bootstrap";
 import React, { useActionState, useEffect, useState } from "react";
 
-import { FodderStock } from "@/models/Fodder";
+// import { FodderStock } from "@/models/Fodder";
 import { FodderType } from "@/models/enum";
 import create from "@/app/(dashboard)/fodder/create/action";
 
@@ -41,7 +38,7 @@ const SubmitButton = () => {
 };
 
 export default function FodderForm(props: Props) {
-  const { fodder, types } = props;
+  const { fodder } = props;
 
   const [state, formAction] = useActionState(create, {
     success: false,
