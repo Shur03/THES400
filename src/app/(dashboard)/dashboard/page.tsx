@@ -5,6 +5,7 @@ import WeatherChart from "@/components/charts/WeatherChart";
 import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Header from "@/components/header/Header";
 
 export default function Dashboard() {
   const data = [
@@ -56,7 +57,7 @@ export default function Dashboard() {
   }, []);
   return (
     <div>
-      {/* <Header /> */}
+      <Header username={session.user?.name || "Guest"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
         <p className="text-gray-900 mt-5">Hi, {session.user?.name}</p>
         <button onClick={() => signOut()}>Sign Out</button>
@@ -77,11 +78,11 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-      {/* <div className="px-5 w-full text-gray-800 rounded-lg">
+      <div className="px-5 w-full text-gray-800 rounded-lg">
         {loading && <p className="text-white text-center">Уншиж байна...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
         {weather && <WeatherChart data={weather} />}
-      </div> */}
+      </div>
       <Footer />
     </div>
   );
