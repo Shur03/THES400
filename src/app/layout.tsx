@@ -31,12 +31,13 @@ export default function RootLayout({
       >
         <SessionProvider>
           <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
+          // attribute="class"
+          // defaultTheme="system"
+          // enableSystem
+          // disableTransitionOnChange
           >
             {children}
+            {/* <h1>hh</h1> */}
           </ThemeProvider>
         </SessionProvider>
       </body>

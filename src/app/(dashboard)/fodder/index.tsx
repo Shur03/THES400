@@ -1,10 +1,11 @@
 "use client";
 
+import Login from "@/app/(authentication)/login/login";
 import FodderChart from "@/components/charts/FodderChart";
 import Footer from "@/components/footer/Footer";
 import Header from "@/components/header/Header";
 import FodderList from "@/components/lists/FodderList";
-// import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
   Button,
@@ -18,12 +19,20 @@ import {
 
 export default function Index() {
   const router = useRouter();
-  /* <FodderChart/>  */
-  const username = "Shur";
+  const { data: session, status } = useSession();
+  if (status === "loading") {
+    return <p>Түр хүлээнэ үү</p>;
+  }
+  if (!session) {
+    return (
+      <div>
+        <Login />
+      </div>
+    );
+  }
   return (
     <Card>
-      <Header username={username} />
-      <Card.Header>Fodder List</Card.Header>
+      <Header username={session.user?.name || "Guest"} />
       <div className="col-sm-6 col-lg-4 bg-blue-300 text-gray-900 d">
         <Card>
           <CardBody className="pb-0 d-flex justify-content-between align-items-start">
@@ -47,9 +56,7 @@ export default function Index() {
               </DropdownMenu>
             </Dropdown>
           </CardBody>
-          <div className="mt-3 mx-3" style={{ height: "70px" }}>
-            {/* <FodderChart /> */}
-          </div>
+          <div className="mt-3 mx-3" style={{ height: "70px" }}></div>
         </Card>
       </div>
       <CardBody>

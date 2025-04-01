@@ -17,6 +17,8 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 const user = await prisma.herder.findFirst({
                   where: {
                     phone: credentials.phone,
+
+                    password : credentials.password,
                   }
                 });
         
