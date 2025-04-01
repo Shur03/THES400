@@ -9,14 +9,12 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { FodderStock } from "@/models/Fodder";
-import THSort from "../tableSort/THSort";
 // import THSort from "../tableSort/THSort";
 
 export default function FodderList() {
   const [fodders, setFodders] = useState<FodderStock[]>([]);
 
   useEffect(() => {
-    // Fetch data from the correct API route
     fetch("/api/fodders") // Changed to the correct API endpoint
       .then((res) => res.json())
       .then((data) => setFodders(data))
@@ -33,13 +31,13 @@ export default function FodderList() {
             <th>№</th>
             <th>Төрөл</th>
             <th>
-              <THSort name="counts">Тоо</THSort>
+              <th>Тоо</th>
             </th>
             <th className="text-end">
-              <THSort name="weight">Жин</THSort>
+              <th>Жин</th>
             </th>
             <th className="text-end">
-              <THSort name="price">Үнэ</THSort>
+              <th>Үнэ</th>
             </th>
             <th className="text-end">Худалдан авсан өдөр</th>
             <th aria-label="Action" />
