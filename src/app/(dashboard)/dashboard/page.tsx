@@ -23,8 +23,6 @@ export default function Dashboard() {
   const city = "Ulaanbaatar"; // Fixed city for weather display
 
   const { data: session, status } = useSession();
-
-  // ✅ Move useEffect to the top level before any early return
   useEffect(() => {
     const fetchWeather = async () => {
       setLoading(true);
@@ -43,20 +41,24 @@ export default function Dashboard() {
     };
 
     fetchWeather();
-  }, []);
+  }, [session]);
 
   if (status === "loading") {
     return <p>Loading...</p>;
   }
 
   if (!session) {
-    return (
-      <div>
-        <p>Нэвтэрнэ үү.</p>
-        <button onClick={() => signIn()}>Нэвтрэх</button>
-      </div>
-    );
+    return <p>Нэвтэрнэ үү.</p>;
   }
+
+  // if (!session) {
+  //   return (
+  //     <div>
+  //       <p>Нэвтэрнэ үү.</p>
+  //       <button onClick={() => signIn()}>Нэвтрэх</button>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
