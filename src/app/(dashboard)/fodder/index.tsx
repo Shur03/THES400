@@ -4,7 +4,7 @@ import Login from "@/app/(authentication)/login/login";
 import FodderChart from "@/components/charts/FodderChart";
 import Footer from "@/components/footer/Footer";
 import Header from "@/components/header/Header";
-import FodderList from "@/components/lists/FodderList";
+import FodderList from "@/components/page/Fodder/FodderList";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {

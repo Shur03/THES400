@@ -50,12 +50,12 @@ export default async function create(
       formKey: prevState.formKey,
       message: "Алдаа гарлаа. Ахин оролдоно уу.",
     };
+  } else {
+    return {
+      success: true,
+      scrollTop: true,
+      formKey: prevState.formKey + 1,
+      message: "Амжилттай хадгалагдлаа.",
+    };
   }
-
-  return {
-    success: true,
-    scrollTop: true,
-    formKey: prevState.formKey + 1,
-    message: "Амжилттай хадгалагдлаа.",
-  };
 }

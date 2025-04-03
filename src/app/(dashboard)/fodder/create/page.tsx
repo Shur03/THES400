@@ -10,7 +10,6 @@ import {
   FormGroup,
   FormLabel,
 } from "react-bootstrap";
-import RecordForm from "@/components/page/Fodder/record/RecordForm";
 
 export default function Page() {
   const [formType, setFormType] = useState<string>("purchase"); // Default to purchase form

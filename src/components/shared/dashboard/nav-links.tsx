@@ -23,7 +23,7 @@ const links = [
     href: "/fodder",
     icon: TreeDeciduous,
   },
-  { name: "Эмчилгээ, вакцин", href: "/treatments", icon: Syringe },
+  { name: "Эмчилгээ, вакцин", href: "/treatment", icon: Syringe },
   { name: "Тооцоолуур", href: "/calculator", icon: Calculator },
 ];
 

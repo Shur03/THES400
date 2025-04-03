@@ -6,8 +6,16 @@ import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "@/components/header/Header";
+import { Spinner } from "react-bootstrap";
 
 export default function Dashboard() {
+  // Dashboard-д зориулж доорх талбаруудыг харуулна.
+  interface LivestockData {
+    stock_type: string;
+    _count: {
+      stock_type: number;
+    };
+  }
   const data = [
     { title: "Хонь", value: "300" },
     { title: "Ямаа", value: "500" },
@@ -19,8 +27,9 @@ export default function Dashboard() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const city = "Ulaanbaatar"; // Fixed city for weather display
+  const [livestockLoading, setLivestockLoading] = useState(true);
+  const city = "Ulaanbaatar";
+  const [livestockData, setLivestockData] = useState<LivestockData[]>([]);
 
   const { data: session, status } = useSession();
   useEffect(() => {
@@ -51,15 +60,6 @@ export default function Dashboard() {
     return <p>Нэвтэрнэ үү.</p>;
   }
 
-  // if (!session) {
-  //   return (
-  //     <div>
-  //       <p>Нэвтэрнэ үү.</p>
-  //       <button onClick={() => signIn()}>Нэвтрэх</button>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div>
       <Header username={session.user?.name || "Guest"} />
@@ -81,6 +81,37 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        {livestockLoading ? (
+          <div className="col-span-full text-center py-5">
+            <Spinner animation="border" variant="primary" />
+            <p className="mt-2">Малын мэдээлэл ачааллаж байна...</p>
+          </div>
+        ) : livestockData.length > 0 ? (
+          livestockData.map((item, index) => (
+            <div
+              key={index}
+              className="bg-blue-100 rounded-xl p-4 shadow-md flex items-center justify-between hover:shadow-lg transition-shadow"
+            >
+              <div>
+                <h4 className="text-gray-700 text-lg font-semibold">
+                  {item.stock_type}
+                </h4>
+                <p className="text-2xl font-bold text-gray-800">
+                  {item._count.stock_type}
+                </p>
+              </div>
+              <div className="w-12 h-8">
+                <StockChart />
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-5 text-gray-500">
+            Малын мэдээлэл олдсонгүй
+          </div>
+        )}
+      </div> */}
       <div className="px-5 w-full text-gray-800 rounded-lg">
         {loading && <p className="text-white text-center">Уншиж байна...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}

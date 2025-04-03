@@ -1,3 +1,5 @@
+import Index from ".";
+
 export default function Page() {
-  return <h1>Treatment</h1>;
+  return <Index />;
 }

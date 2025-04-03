@@ -7,8 +7,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   if (!session) {
     return (
       <div>
-        <p>Нэвтэрнэ үү.</p>
-        <button onClick={() => signIn()}>Нэвтрэх</button>
+        <button className="bg-blue-400 text-gray-900" onClick={() => signIn()}>
+          Нэвтрэх
+        </button>
       </div>
     );
   }

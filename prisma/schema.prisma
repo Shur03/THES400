@@ -107,7 +107,6 @@ model MedicalRecord {
   freq_date    DateTime?
   stock        LiveStock  @relation(fields: [stock_id], references: [id])
 }
-
 model Sire {
   id       Int        @id @default(autoincrement())
   stock_id Int
