@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 export async function create(formData: {
   stock_id: number;
   treatment_name: string;
-  counts: number;
   descrip: string;
   freq_date: string;
 }) {
@@ -16,7 +15,6 @@ export async function create(formData: {
       data: {
         stock_id: formData.stock_id,
         treatment_name: formData.treatment_name,
-        counts: formData.counts,
         descrip: formData.descrip,
         freq_date: formData.freq_date ? new Date(formData.freq_date) : null,
       },

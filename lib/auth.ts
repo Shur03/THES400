@@ -1,8 +1,8 @@
 // lib/auth.ts
 import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "./prisma";
+import NextAuthOptions from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password", required: true }
       },
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.password) {
+        if (!credentials.phone || !credentials.password) {
           throw new Error("Нууц үг эсвэл дугаар буруу");
         }
 
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found");
         }
 
-        if (user.password !== credentials.password) {
+        if (user?.password !== credentials.password) {
           throw new Error("Нууц үг буруу");
         }
 
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }: { token: any; user?: { id: string; phone: string } }) {
+    async jwt({ token, user }: { token: any; user?: any }) {
       if (user) {
         token.id = user.id;
         token.phone = user.phone;
@@ -55,10 +55,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.phone = token.phone as string;
-      }
+      session.user.id = token.id;
+      session.user.phone = token.phone;
       return session;
     }
   },

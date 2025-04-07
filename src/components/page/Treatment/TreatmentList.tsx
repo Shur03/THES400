@@ -30,16 +30,9 @@ type MedicalRecord = {
   freq_date: string | null;
   stock?: {
     id: number;
-    stock_type?: string; // Assuming livestock might have a name
+    stock_type?: string;
   };
 };
-const ANIMAL_TYPES = [
-  { id: 1, name: "Хонь" },
-  { id: 2, name: "Ямаа" },
-  { id: 3, name: "Үхэр" },
-  { id: 4, name: "Адуу" },
-  { id: 5, name: "Тэмээ" },
-];
 export default function TreatmentList() {
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -200,3 +193,4 @@ export default function TreatmentList() {
     </div>
   );
 }
+//

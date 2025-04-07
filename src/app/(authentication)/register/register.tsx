@@ -1,134 +1,63 @@
 "use client";
 
-import { Alert, Button, Form, FormControl, InputGroup } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
+import { useRegister } from "@/app/hooks/useRegister";
 import { useState } from "react";
-import InputGroupText from "react-bootstrap/InputGroupText";
-import { signIn } from "next-auth/react";
-import { Phone, User } from "lucide-react";
 
-export default function Register() {
-  const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+export default function RegisterPage() {
+  const { register, loading, error } = useRegister();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const register = async () => {
-    setSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     try {
-      const res = await signIn("credentials", {
-        username: "Username",
-        password: "Password",
-        redirect: false,
-        callbackUrl: "/",
-      });
-
-      if (!res) {
-        setError("Register failed");
-        return;
-      }
-
-      const { ok, url, error: err } = res;
-
-      if (!ok) {
-        if (err) {
-          setError(err);
-          return;
-        }
-
-        setError("Register failed");
-        return;
-      }
-
-      if (url) {
-        router.push(url);
-      }
+      const user = await register(name, password, phone);
+      alert("Registration successful!");
+      console.log(user);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    } finally {
-      setSubmitting(false);
+      console.error(err);
     }
   };
 
   return (
-    <>
-      <Alert
-        variant="danger"
-        show={error !== ""}
-        onClose={() => setError("")}
-        dismissible
+    <div className="flex h-screen items-center justify-center ">
+      <form
+        onSubmit={handleSubmit}
+        className="p-8 bg-blue-200  rounded shadow-md w-96"
       >
-        {error}
-      </Alert>
-      <Form onSubmit={register}>
-        <InputGroup className="mb-3">
-          <InputGroupText>
-            <User />
-          </InputGroupText>
-          <FormControl
-            name="username"
-            required
-            disabled={submitting}
-            placeholder="Нэрээ оруулна уу"
-            aria-label="Username"
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroupText>
-            <Phone />
-          </InputGroupText>
-          <FormControl
-            type="phone"
-            name="phone"
-            required
-            disabled={submitting}
-            placeholder="Утасны дугаараа оруулна уу"
-            aria-label="Phone"
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroupText>
-            <FontAwesomeIcon icon={faLock} fixedWidth />
-          </InputGroupText>
-          <FormControl
-            type="password"
-            name="password"
-            required
-            disabled={submitting}
-            placeholder="Нууц үгээ оруулна уу"
-            aria-label="Password"
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroupText>
-            <FontAwesomeIcon icon={faLock} fixedWidth />
-          </InputGroupText>
-          <FormControl
-            type="password"
-            name="password_repeat"
-            required
-            disabled={submitting}
-            placeholder="Нууц үгээ давтан хийнэ үү"
-            aria-label="Confirm password"
-          />
-        </InputGroup>
-
-        <Button
+        <h1 className="text-2xl font-bold mb-4">Бүртгүүлэх</h1>
+        {error && <p className="text-red-500">{error}</p>}
+        <input
+          type="text"
+          placeholder="Нэрээ оруулна уу"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Утасны дугаараа оруулна уу"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <input
+          type="password"
+          placeholder="Нууц үгээ оруулна уу"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <button
           type="submit"
-          className="d-block w-100"
-          disabled={submitting}
-          variant="success"
+          className="w-full bg-blue-500 text-white py-2 rounded"
+          disabled={loading}
         >
-          Хадгалах
-        </Button>
-      </Form>
-    </>
+          {loading ? "Registering..." : "Register"}
+        </button>
+      </form>
+    </div>
   );
 }

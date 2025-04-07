@@ -65,11 +65,8 @@ export default function Index() {
   return (
     <Card>
       <Header username={session.user?.name || "Guest"} />
-      <div className="col-sm-6 col-lg-4 bg-blue-200 text-gray-900 rounded-lg p-3 rounded-3 m-3 ">
-        <h5 className="text-primary mb-3">
-          <Calendar className="me-2" size={20} />
-          Ойролцоох вакцинжуулалт
-        </h5>
+      <div className="col-sm-6 col-lg-4 w-2/5 bg-blue-200 text-gray-900 rounded-lg p-3 rounded-3 m-3 ">
+        <h5 className="text-primary mb-3 text-sm">Ойролцоох вакцинжуулалт</h5>
 
         {loadingUpcoming ? (
           <div className="text-center py-3">
@@ -99,7 +96,7 @@ export default function Index() {
             ))}
           </ListGroup>
         ) : (
-          <div className="text-center py-3 text-muted">
+          <div className="text-center py-3 text-muted text-sm text-gray-700">
             Ойролцоох вакцинжуулалт олдсонгүй
           </div>
         )}

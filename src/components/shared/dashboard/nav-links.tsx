@@ -17,7 +17,7 @@ import { cn } from "@/app/lib/utils";
 const links = [
   { name: "Нүүр", href: "", icon: HomeIcon },
   { name: "Дашбоард", href: "/dashboard", icon: ChartPie },
-  { name: "Бүртгэл", href: "registrations", icon: ClipboardPlus },
+  { name: "Бүртгэл", href: "registration", icon: ClipboardPlus },
   {
     name: "Өвс тэжээл",
     href: "/fodder",

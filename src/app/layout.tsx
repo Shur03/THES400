@@ -29,17 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-          <ThemeProvider
-          // attribute="class"
-          // defaultTheme="system"
-          // enableSystem
-          // disableTransitionOnChange
-          >
-            {children}
-            {/* <h1>hh</h1> */}
-          </ThemeProvider>
-        </SessionProvider>
+        <div className="bg-[url(/img/bgImg.jpg)] bg-cover bg-center bg-no-repeat">
+          <SessionProvider>{children}</SessionProvider>
+        </div>
       </body>
     </html>
   );

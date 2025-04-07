@@ -16,9 +16,6 @@ export async function GET() {
   try {
     const livestockData = await prisma.liveStock.groupBy({
       by: ['stock_type'],
-      where: {
-        owner_id: session.user.id
-      },
       _count: {
         stock_type: true
       },

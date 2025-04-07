@@ -18,41 +18,32 @@ export async function GET() {
   }
 
   try {
-    const upcoming = await prisma.medicalRecord.findMany({
-      where: {
-        freq_date: {
-          gte: new Date(), // Only future dates
-          lt: new Date(new Date().setDate(new Date().getDate() + 30)) // Next 30 days
-        }
-      },
+    const upcoming = await prisma.liveStock.findMany({
+      // where: {
+        
+      // },
       select: {
         id: true,
-        treatment_name: true,
-        freq_date: true,
-        stock: {
-          select: {
-            stock_type: true
-          }
-        }
+        stock_type: true,
+        counts: true,
+        
       },
       orderBy: {
-        freq_date: 'asc'
+        id: 'asc'
       },
-      take: 5 // Limit to 5 upcoming treatments
     });
 
-    const formatted = upcoming.map(t => ({
-      id: t.id,
-      treatment_name: t.treatment_name,
-      freq_date: t.freq_date ? t.freq_date.toISOString() : null,
-      stock_type: t.stock.stock_type
+    const formatted = upcoming.map(s => ({
+      id: s.id,
+      stock_type: s.stock_type,
+      counts: s.counts 
     }));
 
     return NextResponse.json(formatted);
   } catch (error) {
-    console.error('Error fetching upcoming hh:', error);
+    console.error('алдаа гарлаа:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch upcoming hh' },
+      { error: 'Алдаа гарлаа.' },
       { status: 500 }
     );
   } finally {
