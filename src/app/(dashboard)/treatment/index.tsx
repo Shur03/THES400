@@ -32,25 +32,25 @@ interface UpcomingTreatment {
 export default function Index() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [upcomingTreatments, setUpcomingTreatments] = useState<
-    UpcomingTreatment[]
-  >([]);
-  const [loadingUpcoming, setLoadingUpcoming] = useState(true);
+  // const [upcomingTreatments, setUpcomingTreatments] = useState<
+  //   UpcomingTreatment[]
+  // >([]);
+  // const [loadingUpcoming, setLoadingUpcoming] = useState(true);
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetch("/api/treatments/upcoming")
-        .then((res) => res.json())
-        .then((data) => {
-          setUpcomingTreatments(data);
-          setLoadingUpcoming(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching upcoming treatments:", error);
-          setLoadingUpcoming(false);
-        });
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session?.user?.id) {
+  //     fetch("/api/treatments/upcoming")
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         setUpcomingTreatments(data);
+  //         setLoadingUpcoming(false);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching upcoming treatments:", error);
+  //         setLoadingUpcoming(false);
+  //       });
+  //   }
+  // }, [session]);
 
   if (status === "loading") {
     return (
@@ -72,7 +72,7 @@ export default function Index() {
   return (
     <Card>
       <Header username={session.user?.name || "Guest"} />
-      <div className="col-sm-6 col-lg-4 w-2/5 bg-blue-200 text-gray-900 rounded-lg p-3 rounded-3 mt-5 ">
+      {/* <div className="col-sm-6 col-lg-4 w-2/5 bg-blue-200 text-gray-900 rounded-lg p-3 rounded-3 mt-5 ">
         <h5 className="text-primary mb-3 text-sm">Ойролцоох вакцинжуулалт</h5>
 
         {loadingUpcoming ? (
@@ -107,7 +107,7 @@ export default function Index() {
             Ойролцоох вакцинжуулалт олдсонгүй
           </div>
         )}
-      </div>
+      </div> */}
       <CardBody>
         <div className="mb-3 text-end pt-5">
           <Button
