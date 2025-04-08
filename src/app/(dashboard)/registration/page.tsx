@@ -2,6 +2,7 @@
 
 import StockChart from "@/components/charts/StockChart";
 import Footer from "@/components/footer/Footer";
+import EventChart from "@/components/page/Stock/EventChart";
 import EventList from "@/components/page/Stock/EventList";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -101,6 +102,7 @@ export default function Page() {
       <div className="h-4">
         <h1>Өсөлт хорогдол бүртгэх</h1>
         {/** Өсөлт хорогдлыг графикаар харуулах */}
+        <EventChart />
         <StockChart />
         <EventList />
         <Footer />
