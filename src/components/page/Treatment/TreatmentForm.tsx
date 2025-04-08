@@ -10,12 +10,6 @@ export default function TreatmentForm() {
     descrip: "",
     freq_date: "",
   });
-  const [state, setState] = useState<{
-    message: string;
-    success: boolean;
-    errors?: Record<string, string[]>;
-  }>({ message: "", success: false });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -27,9 +21,14 @@ export default function TreatmentForm() {
     { id: 4, name: "Адуу" },
     { id: 5, name: "Тэмээ" },
   ];
-  // const [livestockTypes, setLivestockTypes] = useState<LivestockType[]>([]);
-  const [loadingTypes, setLoadingTypes] = useState(true);
 
+  const [loadingTypes, setLoadingTypes] = useState(true);
+  const [state, setState] = useState<{
+    message: string;
+    success: boolean;
+    errors?: Record<string, string[]>;
+  }>({ message: "", success: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -44,34 +43,52 @@ export default function TreatmentForm() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setIsSubmitting(true);
 
-    const res = await fetch("/api/eventRecord", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const result = await res.json();
-
-    if (result.success) {
-      setMessage("Бүртгэл амжилттай хадгалагдлаа!");
-      setSuccess(true);
-      setFormData({
-        stock_id: 0,
-        type: "",
-        count: 0,
-        descrip: "",
-        event_date: "",
+    // Clear previous messages
+    setState({ message: "", success: false, errors: undefined });
+    if (formData.stock_id <= 0) {
+      setState({
+        message: "Малын төрөл сонгоно уу!",
+        success: false,
+        errors: {
+          stock_id: ["Малын төрөл сонгоно уу"],
+        },
       });
-    } else {
-      setMessage(result.error || "Алдаа гарлаа, дахин оролдоно уу.");
-      setSuccess(false);
+      return;
     }
 
-    setIsSubmitting(false);
+    setIsSubmitting(true);
+
+    try {
+      const result = await create(formData);
+
+      if (result.success) {
+        setState({
+          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
+          success: true,
+        });
+        setFormData({
+          stock_id: 0,
+          treatment_name: "",
+          descrip: "",
+          freq_date: "",
+        });
+      }
+      // } else {
+      //   setState({
+      //     message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
+      //     success: false,
+      //     errors: result.errors,
+      //   });
+      // }
+    } catch (error) {
+      setState({
+        message: "Алдаа гарлаа, дахин оролдоно уу",
+        success: false,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,9 +96,18 @@ export default function TreatmentForm() {
       <h2 className="text-xl font-semibold mb-4">Эмчилгээний бүртгэл</h2>
 
       {state.message && (
-        <Alert variant={state.success ? "success" : "danger"}>
-          {state.message}
-        </Alert>
+        <div
+          className={`mb-4 p-4 rounded-md ${
+            state.success
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          <div className="font-bold">
+            {state.success ? "Амжилттай!" : "Алдаа!"}
+          </div>
+          <div>{state.message}</div>
+        </div>
       )}
 
       <form onSubmit={handleSubmit}>
