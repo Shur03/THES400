@@ -22,6 +22,13 @@ import {
   ListGroup,
 } from "react-bootstrap";
 
+interface UpcomingTreatment {
+  id: string;
+  treatment_name: string;
+  freq_date: string;
+  stock_type: string;
+}
+
 export default function Index() {
   const router = useRouter();
   const { data: session, status } = useSession();

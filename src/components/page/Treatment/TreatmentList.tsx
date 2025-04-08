@@ -1,25 +1,16 @@
 // components/TreatmentList.tsx
 import {
   Dropdown,
-  DropdownItem,
-  DropdownMenu,
   DropdownToggle,
   Table,
   Button,
-  Badge,
   Spinner,
   Card,
 } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Plus,
-  CalendarDays,
-  NotepadText,
-  Ellipsis,
-  Trash2,
-  Pencil,
-} from "lucide-react";
+import { Plus, NotepadText, Trash2, Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type MedicalRecord = {
   id: number;
@@ -34,6 +25,7 @@ type MedicalRecord = {
   };
 };
 export default function TreatmentList() {
+  const router = useRouter();
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +39,6 @@ export default function TreatmentList() {
         const response = await fetch("/api/treatments");
 
         if (!response.ok) {
-          // Try to get the error message from the response
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
             errorData.error ||
@@ -117,24 +108,20 @@ export default function TreatmentList() {
       <div className="table-responsive text-gray-900 ">
         <Table striped bordered hover className="align-middle">
           <thead className="table-light">
-            <tr
-              className="
-            rounded-lg"
-            >
-              <th style={{ width: "5%" }}>№</th>
-              <th style={{ width: "15%" }}>Вакцинжуулагдсан мал</th>
-              <th style={{ width: "20%" }}>Эмчилгээ/Вакцин</th>
-              <th style={{ width: "10%" }}>Тоо ширхэг</th>
-              <th style={{ width: "20%" }}>Тайлбар</th>
-              <th style={{ width: "15%" }}>Дараагийн огноо</th>
-              <th style={{ width: "15%" }}>Үйлдэл</th>
+            <tr className="rounded-lg">
+              <th className="w-12">№</th> {/* approx 5% */}
+              <th className="w-1/5">Вакцинжуулагдсан</th> {/* 20% */}
+              <th className="w-1/5">Вакцины нэр</th> {/* 20% */}
+              <th className="w-1/5">Тайлбар</th> {/* 20% */}
+              <th className="w-[15%]">Дараагийн огноо</th>{" "}
+              <th className="w-[15%]">Үйлдэл</th>{" "}
             </tr>
           </thead>
-          <tbody className="mx-5 rounded-lg ">
+          <tbody className="mx-5 rounded-lg px-5 ">
             {medicalRecords.map((record, index) => (
               <tr
                 key={record.id}
-                className={index % 2 === 0 ? "bg-blue-200 " : "bg-white  "}
+                className={index % 2 === 0 ? "bg-gray-200 " : "bg-white  "}
               >
                 <td className="fw-bold">{index + 1}</td>
                 <td>
@@ -144,9 +131,6 @@ export default function TreatmentList() {
                   )}
                 </td>
                 <td className="fw-semibold ">{record.treatment_name}</td>
-                <td>
-                  <Badge bg="secondary">{record.counts}</Badge>
-                </td>
                 <td>
                   <small className="text-muted">{record.descrip || "-"}</small>
                 </td>
@@ -168,21 +152,17 @@ export default function TreatmentList() {
                       id={`action-${record.id}`}
                     >
                       <div className="flex flex-row space-x-5">
-                        <Pencil className="text-blue-400 " />
+                        <Button
+                          onClick={() =>
+                            router.push(`/treatment/${record.id}/edit`)
+                          }
+                        >
+                          <Pencil className="text-blue-400" />
+                        </Button>
+
                         <Trash2 className="text-red-500" />
                       </div>
                     </DropdownToggle>
-                    {/* <DropdownMenu>
-                      <DropdownItem href={`/treatment/${record.id}`}>
-                        Дэлгэрэнгүй
-                      </DropdownItem>
-                      <Link href={`/treatment/${record.id}/edit`} passHref>
-                        <DropdownItem>Засах</DropdownItem>
-                      </Link>
-                      <DropdownItem className="text-danger">
-                        Устгах
-                      </DropdownItem>
-                    </DropdownMenu> */}
                   </Dropdown>
                 </td>
               </tr>
