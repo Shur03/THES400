@@ -17,22 +17,19 @@ export default function EventForm() {
     errors?: Record<string, string[]>;
   }>({ message: "", success: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-  const [success, setSuccess] = useState(false);
 
   const { data: session } = useSession();
   const STOCK_TYPES = [
     { id: 1, name: "Хонь" },
     { id: 2, name: "Ямаа" },
-    { id: 3, name: "Үхэр" },
-    { id: 4, name: "Адуу" },
+    { id: 3, name: "Адуу" },
+    { id: 4, name: "Үхэр" },
     { id: 5, name: "Тэмээ" },
   ];
   const EVENT_TYPES = [
     { type: "inc", name: "Нэмэгдсэн" },
     { type: "dec", name: "Хорогдсон" },
   ];
-  const [loadingTypes, setLoadingTypes] = useState(true);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -116,7 +113,7 @@ export default function EventForm() {
 
       if (result.success) {
         setState({
-          message: result.message || "Бүртгэл амжилттай хадгалагдлаа!",
+          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
           success: true,
         });
         setFormData({
@@ -148,12 +145,22 @@ export default function EventForm() {
       <h2 className="text-xl font-semibold mb-4">Өсөлт хорогдлын бүртгэл</h2>
 
       {state.message && (
-        <Alert variant={state.success ? "success" : "danger"}>
-          {state.message}
-        </Alert>
+        <div
+          className={`mb-4 p-4 rounded-md ${
+            state.success
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          <div className="font-bold">
+            {state.success ? "Амжилттай!" : "Алдаа!"}
+          </div>
+          <div>{state.message}</div>
+        </div>
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* Rest of your form fields remain the same */}
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="stock_type">
             Малын төрөл
@@ -187,6 +194,7 @@ export default function EventForm() {
             </p>
           )}
         </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="type">
             Төрөл

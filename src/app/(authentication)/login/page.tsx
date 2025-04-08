@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign, CircleAlert, LockKeyhole, User } from "lucide-react";
+import { AtSign, CircleAlert, Link, LockKeyhole, User } from "lucide-react";
 import { executeAction } from "../../../../lib/executeAction";
 import { useLogin } from "@/app/hooks/useLogin";
 import { useRouter } from "next/navigation";
@@ -112,18 +112,6 @@ export default function Login() {
                 />
               </div>
             </div>
-
-            {/* Forgot Password Link */}
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => router.push("/forgot-password")}
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                Нууц үгээ мартсан?
-              </button>
-            </div>
-
             {/* Error Message */}
             {error && (
               <div className="flex items-center p-4 bg-red-50 rounded-lg">

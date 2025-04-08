@@ -58,7 +58,7 @@ export async function create(formData: {
     return {
       success: false,
       message: error.message || "Алдаа гарлаа, дахин оролдоно уу",
-      errors: error.errors, // If Prisma returns specific field errors
+      errors: error.errors,
     };
   } finally {
     await prisma.$disconnect();
