@@ -11,7 +11,7 @@
 - TailwindCss
 - prisma
 - Typescript
-
+- Chart.js
   Ашигласан API ;
 
 - openweather API https://openweathermap.org/
