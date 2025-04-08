@@ -1,16 +1,9 @@
-// components/TreatmentList.tsx
-import {
-  Dropdown,
-  DropdownToggle,
-  Table,
-  Button,
-  Spinner,
-  Card,
-} from "react-bootstrap";
+import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, NotepadText, Trash2, Pencil } from "lucide-react";
+import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
+import StockTypeMap from "@/models/StockTypeMap";
 
 type MedicalRecord = {
   id: number;
@@ -24,6 +17,7 @@ type MedicalRecord = {
     stock_type?: string;
   };
 };
+
 export default function TreatmentList() {
   const router = useRouter();
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
@@ -65,18 +59,22 @@ export default function TreatmentList() {
 
   if (loading) {
     return (
-      <div className="text-center py-5">
+      <div className="flex flex-col items-center justify-center min-h-[200px]">
         <Spinner animation="border" variant="primary" />
-        <p className="mt-2 text-sm text-gray-800">Түр хүлээнэ үү...</p>
+        <p className="mt-3 text-gray-600">Түр хүлээнэ үү...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="alert alert-danger text-center">
-        {error}
-        <Button variant="link" onClick={() => window.location.reload()}>
+      <div className="flex flex-col items-center justify-center p-6 bg-red-50 rounded-lg">
+        <div className="text-red-600 font-medium mb-3">{error}</div>
+        <Button
+          variant="outline-primary"
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-2"
+        >
           Дахин оролдох
         </Button>
       </div>
@@ -85,16 +83,14 @@ export default function TreatmentList() {
 
   if (medicalRecords.length === 0) {
     return (
-      <Card className="text-center py-4">
-        <Card.Body>
-          {/* <FaNotesMedical size={48} className="text-muted mb-3" /> */}
-          <NotepadText />
-          <h5>Бүртгэл байхгүй байна</h5>
-          <p className="text-muted">Шинэ эмчилгээний бүртгэл нэмэх</p>
+      <Card className="text-center py-8 border-0 shadow-sm">
+        <Card.Body className="flex flex-col items-center">
+          <NotepadText size={48} className="text-gray-400 mb-4" />
+          <h5 className="text-lg font-semibold mb-2">Бүртгэл байхгүй байна</h5>
+          <p className="text-gray-500 mb-4">Шинэ эмчилгээний бүртгэл нэмэх</p>
           <Link href="/treatment/new" passHref>
-            <Button variant="primary">
-              {/* <FaPlus className="me-2" /> */}
-              <Plus />
+            <Button variant="primary" className="flex items-center gap-2">
+              <Plus size={18} />
               Нэмэх
             </Button>
           </Link>
@@ -104,73 +100,123 @@ export default function TreatmentList() {
   }
 
   return (
-    <div className="mb-4">
-      <div className="table-responsive text-gray-900 ">
-        <Table striped bordered hover className="align-middle">
-          <thead className="table-light">
-            <tr className="rounded-lg">
-              <th className="w-12">№</th> {/* approx 5% */}
-              <th className="w-1/5">Вакцинжуулагдсан</th> {/* 20% */}
-              <th className="w-1/5">Вакцины нэр</th> {/* 20% */}
-              <th className="w-1/5">Тайлбар</th> {/* 20% */}
-              <th className="w-[15%]">Дараагийн огноо</th>{" "}
-              <th className="w-[15%]">Үйлдэл</th>{" "}
-            </tr>
-          </thead>
-          <tbody className="mx-5 rounded-lg px-5 ">
-            {medicalRecords.map((record, index) => (
-              <tr
-                key={record.id}
-                className={index % 2 === 0 ? "bg-gray-200 " : "bg-white  "}
-              >
-                <td className="fw-bold">{index + 1}</td>
-                <td>
-                  {/* <Badge bg="info">{record.stock_id}</Badge> */}
-                  {record.stock?.stock_type && (
-                    <span className="ms-2">{record.stock.stock_type}</span>
-                  )}
-                </td>
-                <td className="fw-semibold ">{record.treatment_name}</td>
-                <td>
-                  <small className="text-muted">{record.descrip || "-"}</small>
-                </td>
-                <td>
-                  {record.freq_date ? (
-                    <div className="d-flex align-items-center">
-                      {new Date(record.freq_date).toLocaleDateString()}
-                    </div>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td>
-                  <Dropdown align="end">
-                    <DropdownToggle
-                      as={Button}
-                      variant="link"
-                      className="text-dark p-0"
-                      id={`action-${record.id}`}
-                    >
-                      <div className="flex flex-row space-x-5">
-                        <Button
-                          onClick={() =>
-                            router.push(`/treatment/${record.id}/edit`)
-                          }
-                        >
-                          <Pencil className="text-blue-400" />
-                        </Button>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Эмчилгээний бүртгэл
+          </h2>
+        </div>
 
-                        <Trash2 className="text-red-500" />
-                      </div>
-                    </DropdownToggle>
-                  </Dropdown>
-                </td>
+        <div className="overflow-x-auto">
+          <Table className="min-w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  №
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Вакцинжуулагдсан
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Вакцины нэр
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Тайлбар
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Дараагийн огноо
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Үйлдэл
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {medicalRecords.map((record, index) => (
+                <tr
+                  key={record.id}
+                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {index + 1}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {record.stock?.stock_type && (
+                      <Badge
+                        bg="info"
+                        className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800"
+                      >
+                        {StockTypeMap[record.stock.stock_type] ??
+                          record.stock.stock_type}
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    {record.treatment_name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                    {record.descrip || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {record.freq_date ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CalendarDays size={16} className="text-gray-400" />
+                        {new Date(record.freq_date).toLocaleDateString()}
+                      </div>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() =>
+                          router.push(`/treatment/${record.id}/edit`)
+                        }
+                        className="p-1.5 rounded-full hover:bg-blue-50"
+                      >
+                        <Pencil size={16} className="text-blue-600" />
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleDelete(record.id)}
+                        className="p-1.5 rounded-full hover:bg-red-50"
+                      >
+                        <Trash2 size={16} className="text-red-600" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </div>
     </div>
   );
 }
-//
+
+// Add this delete handler function
+async function handleDelete(id: number) {
+  if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
+    try {
+      const response = await fetch(`/api/treatments/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        // Refresh the page or update state
+        window.location.reload();
+      } else {
+        throw new Error("Устгах явцад алдаа гарлаа");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Устгах явцад алдаа гарлаа. Дахин оролдоно уу.");
+    }
+  }
+}

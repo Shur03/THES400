@@ -24,7 +24,7 @@ export function useRegister() {
       }
 
       const data = await response.json();
-      return data; // Return the registered user data
+      return data;
     } catch (err: any) {
       setError(err.message);
       throw err;

@@ -1,6 +1,7 @@
 "use client";
 
 import StockChart from "@/components/charts/StockChart";
+import Footer from "@/components/footer/Footer";
 import EventList from "@/components/page/Stock/EventList";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -30,8 +31,6 @@ export default function Page() {
     e.preventDefault();
     try {
       const response = await axios.post("/api/livestock", formData);
-      // Refresh your livestock data after successful submission
-      // You might want to add a function to refetch the data here
       setFormData({ stock_type: "", counts: "" });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -44,7 +43,7 @@ export default function Page() {
   };
   return (
     <div>
-      <div className="p-4 text-gray-900">
+      {/* <div className="p-4 text-gray-900">
         <h2 className="text-xl font-bold mb-4">Малын бүртгэл</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="mb-4">
@@ -98,19 +97,13 @@ export default function Page() {
             Малын бүртгэл нэмэх
           </button>
         </form>
-      </div>
+      </div> */}
       <div className="h-4">
         <h1>Өсөлт хорогдол бүртгэх</h1>
         {/** Өсөлт хорогдлыг графикаар харуулах */}
         <StockChart />
-        <Button
-          variant="success"
-          className="text-white bg-green-400 rounded-lg p-2 "
-          onClick={() => router.push("/registration/create")}
-        >
-          + Бүртгэл нэмэх
-        </Button>
         <EventList />
+        <Footer />
       </div>
     </div>
   );

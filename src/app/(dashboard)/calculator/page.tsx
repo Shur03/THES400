@@ -44,60 +44,60 @@ export default function Calculator() {
   };
 
   return (
-    <div className="flex h-screen text-gray-800">
+    <div className="flex flex-col lg:flex-row h-screen text-gray-800">
       <div className="flex-1 p-8">
-        <h1 className="text-2xl font-bold mb-4">Тооцоолуур</h1>
+        <h1 className="text-xl lg:text-2xl text-center font-bold mb-4">
+          Тооцоолуур
+        </h1>
 
         {/* Шаардлагатай байгаа мөнгөн дүнгээ оруулна */}
         <input
-          className="w-2/3 h-10 bg-gray-200 text-gray-700 mx-5 px-5 rounded-lg"
+          className="w-full lg:w-2/3 h-10 bg-gray-200 text-sm lg:text-lg text-gray-700 px-5 pr-5 rounded-lg mb-6"
           type="number"
           id="amount"
           value={needAmount}
           onChange={(e) => setNeedAmount(e.target.value)}
-          placeholder="Та өөрт шаардлагатай байгаа үнийн дүнгээ оруулна уу"
+          placeholder="Шаардлагатай үнийн дүнгээ оруулна уу"
         />
 
-        <div className="flex gap-6 mt-6 mx-5">
-          <div className="p-4 border-4 border-blue-300 rounded-lg w-2/3">
-            {items.length >= 0 ? (
-              items.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between border-b py-2 gap-5"
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Items Section */}
+          <div className="p-4 border-4 border-blue-300 rounded-lg w-full lg:w-2/3">
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between border-b py-2 gap-5"
+              >
+                <input
+                  type="text"
+                  id="name"
+                  className="w-full lg:w-2/3 h-8 text-center border rounded bg-gray-200"
+                  placeholder="Эр хонь"
+                  value={item.name}
+                  onChange={(e) => updateItem(index, "name", e.target.value)}
+                />
+                <input
+                  type="number"
+                  className="w-full lg:w-2/3 h-8 text-center border rounded bg-gray-200"
+                  placeholder="200000"
+                  value={item.price}
+                  onChange={(e) => updateItem(index, "price", e.target.value)}
+                />
+                <input
+                  type="number"
+                  className="w-full lg:w-2/3 h-8 text-center border rounded bg-gray-200"
+                  placeholder="0"
+                  value={item.count}
+                  onChange={(e) => updateItem(index, "count", e.target.value)}
+                />
+                <button
+                  className="text-gray-500 hover:text-red-500"
+                  onClick={() => removeItem(index)}
                 >
-                  <input
-                    type="text"
-                    className="w-32 h-8 text-center border rounded bg-gray-200"
-                    placeholder="Эр хонь"
-                    value={item.name}
-                    onChange={(e) => updateItem(index, "name", e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="w-24 h-8 text-center border rounded bg-gray-200"
-                    placeholder="200000"
-                    value={item.price}
-                    onChange={(e) => updateItem(index, "price", e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="w-24 h-8 text-center border rounded bg-gray-200"
-                    placeholder="0"
-                    value={item.count}
-                    onChange={(e) => updateItem(index, "count", e.target.value)}
-                  />
-                  <button
-                    className="text-gray-500 hover:text-red-500"
-                    onClick={() => removeItem(index)}
-                  >
-                    <Trash />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">No items available</p>
-            )}
+                  <Trash />
+                </button>
+              </div>
+            ))}
 
             {/* Add button */}
             <button
@@ -109,7 +109,7 @@ export default function Calculator() {
           </div>
 
           {/* Information Section */}
-          <div className="rounded-lg w-1/3">
+          <div className="w-full lg:w-1/3 mt-6 lg:mt-0">
             <div className="p-4 border-4 border-blue-300 rounded-lg text-lg">
               <h1 className="font-bold text-gray-800 text-lg">Нийт үнэ</h1>
               <p className="text-2xl text-gray-800">

@@ -1,7 +1,7 @@
 import { create } from "@/app/(dashboard)/treatment/create/action";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { Button, Alert, Spinner } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Alert } from "react-bootstrap";
 
 export default function TreatmentForm() {
   const [formData, setFormData] = useState({
@@ -46,16 +46,25 @@ export default function TreatmentForm() {
     event.preventDefault();
     setIsSubmitting(true);
 
-    const result = await create(formData);
+    const res = await fetch("/api/eventRecord", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await res.json();
 
     if (result.success) {
-      setMessage("Вакцин амжилттай хадгалагдлаа!");
+      setMessage("Бүртгэл амжилттай хадгалагдлаа!");
       setSuccess(true);
       setFormData({
         stock_id: 0,
-        treatment_name: "",
+        type: "",
+        count: 0,
         descrip: "",
-        freq_date: "",
+        event_date: "",
       });
     } else {
       setMessage(result.error || "Алдаа гарлаа, дахин оролдоно уу.");
@@ -64,21 +73,7 @@ export default function TreatmentForm() {
 
     setIsSubmitting(false);
   };
-  //Нэвтэрч орсон хэрэглэгчийн мал сүрэг
-  // useEffect(() => {
-  //   if (session?.user?.id) {
-  //     fetch("/api/user-stock")
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         // setLivestockTypes(data);
-  //         setLoadingTypes(false);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error:", error);
-  //         setLoadingTypes(false);
-  //       });
-  //   }
-  // }, [session]);
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Эмчилгээний бүртгэл</h2>

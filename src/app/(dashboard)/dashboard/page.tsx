@@ -6,7 +6,6 @@ import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "@/components/header/Header";
-import { Spinner } from "react-bootstrap";
 import { useStock } from "@/app/hooks/useStock";
 
 export default function Dashboard() {

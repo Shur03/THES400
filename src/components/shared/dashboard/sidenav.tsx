@@ -6,8 +6,6 @@ export default function SideNav() {
       <div className="flex grow flex-row space-x-2 md:flex-col md:space-x-0 md:space-y-2 md:mt-2">
         <NavLinks />
         <div className="h-auto w-full grow rounded-md md:block"></div>
-
-        <h1>hh</h1>
       </div>
     </div>
   );
