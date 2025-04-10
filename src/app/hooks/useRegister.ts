@@ -20,7 +20,7 @@ export function useRegister() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to register");
+        throw new Error(data.error || "Алдаа гарлаа");
       }
 
       const data = await response.json();

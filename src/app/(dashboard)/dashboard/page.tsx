@@ -6,7 +6,7 @@ import Footer from "@/components/footer/Footer";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "@/components/header/Header";
-import { useStock } from "@/app/hooks/useStock";
+import StockList from "@/components/page/Stock/StockList";
 
 export default function Dashboard() {
   // Dashboard-д зориулж доорх талбаруудыг харуулна.
@@ -19,9 +19,7 @@ export default function Dashboard() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { liveStock } = useStock();
   const city = "Ulaanbaatar";
-  const [livestockData, setLivestockData] = useState<LivestockData[]>([]);
 
   const { data: session, status } = useSession();
   useEffect(() => {
@@ -56,22 +54,7 @@ export default function Dashboard() {
     <div>
       <Header username={session.user?.name || "Guest"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-        {liveStock.map((stock, index) => (
-          <div
-            key={index}
-            className="bg-blue-300 rounded-xl p-4 shadow-md flex items-center justify-between"
-          >
-            <div>
-              <h4 className="text-gray-700 text-lg font-semibold">
-                {stock.stock_type}
-              </h4>
-              <p className="text-2xl font-bold text-gray-800">{stock.counts}</p>
-            </div>
-            <div className="w-12 h-8 ">
-              <StockChart />
-            </div>
-          </div>
-        ))}
+        <StockList />
       </div>
       <div className="px-5 w-full text-gray-800 rounded-lg">
         {loading && <p className="text-white text-center">Уншиж байна...</p>}

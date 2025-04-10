@@ -1,5 +1,6 @@
 import { create } from "@/app/(dashboard)/treatment/create/action";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Alert } from "react-bootstrap";
 
@@ -12,7 +13,7 @@ export default function TreatmentForm() {
   });
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const router = useRouter();
   const { data: session } = useSession();
   const STOCK_TYPES = [
     { id: 1, name: "Хонь" },
@@ -73,6 +74,7 @@ export default function TreatmentForm() {
           descrip: "",
           freq_date: "",
         });
+        router.push("/treatment");
       }
       // } else {
       //   setState({
@@ -137,19 +139,6 @@ export default function TreatmentForm() {
                 </option>
               ))}
             </select>
-            {/* <input
-              type="number"
-              id="stock_id"
-              name="stock_id"
-              value={formData.stock_id}
-              onChange={handleChange}
-              className={`flex-1 px-3 py-2 border rounded-md ${
-                state.errors?.stock_id ? "border-red-500" : ""
-              }`}
-              min="1"
-              max="5"
-              placeholder="ID оруулах"
-            /> */}
           </div>
           {state.errors?.stock_id && (
             <p className="text-red-500 text-sm mt-1">

@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Өвс тэжээл, эмчилгээ, малын бүртгэл, тоо толгой өгөгдлийн санд хадгалагдана.
 enum FodderType {
   uvs
   tejeel
@@ -32,25 +31,20 @@ enum EventType {
   inc
 }
 
-enum DamType {
-  heeltei
-  tullusun
-  suwai
-}
-
 model Herder {
   id       Int     @id @default(autoincrement())
   name     String  @db.VarChar(50)
   password String  @db.VarChar(20)
   phone    String  @unique
-  fodders  FodderStock[] // one-to-many relationship
+  stock    LiveStock[]
+  fodders  FodderStock[]
 }
 
 model FodderStock {
   id       Int         @id @default(autoincrement())
   types    FodderType
   owner_id Int
-  owner    Herder        @relation(fields: [owner_id], references: [id]) // Relationship to Herder model
+  owner    Herder      @relation(fields: [owner_id], references: [id])
   records  FodderRecord[]
   purchase FodderPurchase[]
 }
@@ -74,11 +68,14 @@ model FodderPurchase {
 
 model LiveStock {
   id         Int        @id @default(autoincrement())
+  
+  owner_id    Int        // scalar field for relation
   stock_type StockType
   counts     Int
   events     EventRecord[]
   medicals   MedicalRecord[]
   sire       Sire[]
+  owner      Herder     @relation(fields: [owner_id], references: [id])
 }
 
 model EventRecord {
@@ -86,7 +83,7 @@ model EventRecord {
   stock_id   Int
   event_type EventType
   counts     Int
-  descrip    String?     @db.VarChar(100)
+  descrip    String?    @db.VarChar(100)
   event_date DateTime?
   stock      LiveStock  @relation(fields: [stock_id], references: [id])
 }
@@ -99,17 +96,11 @@ model MedicalRecord {
   freq_date    DateTime?
   stock        LiveStock  @relation(fields: [stock_id], references: [id])
 }
+
 model Sire {
   id       Int        @id @default(autoincrement())
   stock_id Int
-  breed    String // Uulder
+  breed    String
   weight   Int?
   stock    LiveStock @relation(fields: [stock_id], references: [id])
-}
-
-model User {
-  id       String @id @default(cuid())
-  phone    String @unique
-  password String
-  name     String?
 }

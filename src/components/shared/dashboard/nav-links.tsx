@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   HomeIcon,
@@ -26,7 +26,7 @@ const links = [
 export default function NavLinks() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
+  const router = useRouter();
   return (
     <>
       {/* Mobile hamburger button */}
@@ -78,6 +78,7 @@ export default function NavLinks() {
             <Link
               key={link.name}
               href={link.href}
+              onClick={() => router.replace(link.href)}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
                 "justify-start",

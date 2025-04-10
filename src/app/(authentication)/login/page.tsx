@@ -161,7 +161,7 @@ export default function Login() {
                 Бүртгэлгүй юу?{" "}
                 <button
                   type="button"
-                  onClick={() => router.push("/register")}
+                  onClick={() => router.replace("/register")}
                   className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                 >
                   Бүртгүүлэх

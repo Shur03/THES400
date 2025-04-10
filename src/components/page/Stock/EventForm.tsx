@@ -1,9 +1,11 @@
 import { create } from "@/app/(dashboard)/registration/create/action";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Alert } from "react-bootstrap";
 
 export default function EventForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     stock_id: 0,
     type: "",
@@ -48,8 +50,6 @@ export default function EventForm() {
         ...prev,
         count: countValue,
       }));
-
-      // Clear error if corrected
       if (countValue >= 0 && state.errors?.count) {
         setState((prev) => ({
           ...prev,
@@ -68,11 +68,7 @@ export default function EventForm() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    // Clear previous messages
     setState({ message: "", success: false, errors: undefined });
-
-    // Client-side validation
     if (formData.count <= 0) {
       setState({
         message: "Тоо толгой 0-ээс их байх ёстой!",
@@ -123,6 +119,7 @@ export default function EventForm() {
           descrip: "",
           event_date: "",
         });
+        router.push("registration");
       } else {
         setState({
           message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
