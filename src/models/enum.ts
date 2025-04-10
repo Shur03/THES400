@@ -15,6 +15,7 @@ export enum FodderType {
     HORSE = "horse",
     CAMEL = "camel",
     CATTLE = "cattle",
+    map = "map",
   }
   
   export enum EventType {

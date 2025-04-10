@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
+import { Button } from "react-bootstrap";
 
 interface HeaderProps {
   username: string;
@@ -12,22 +13,24 @@ export default function Header({ username }: HeaderProps) {
   const { data: session } = useSession();
 
   return (
-    <header className="bg-white shadow-md p-4">
-      <div className="container mx-auto flex justify-between items-center rounded-lg">
+    <header className="bg-gray-100 shadow-md p-4 rounded-lg mb-3">
+      <div className="container mx-auto flex justify-between items-center rounded-lg ">
         <Link href="/" className="text-xl  text-gray-800">
-          Малчны туслах
+          <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            Малчны туслах
+          </span>
         </Link>
         {session ? (
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full shadow">
-              <span className="text-gray-800 font-semibold">{username}</span>
+              {/* <span className="text-gray-800 font-semibold">{username}</span> */}
+              <Button
+                onClick={() => signOut()}
+                className="flex items-center gap-2"
+              >
+                <User className="text-gray-900" />
+              </Button>
             </div>
-            <button
-              onClick={() => signOut()}
-              className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition"
-            >
-              <LogOut />
-            </button>
           </div>
         ) : (
           <Link

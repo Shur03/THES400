@@ -11,7 +11,7 @@ export async function create(formData: {
   freq_date: string;
 }) {
   try {
-    const treatment = await prisma.medicalRecord.create({
+    const treatment = prisma.medicalRecord.create({
       data: {
         stock_id: formData.stock_id,
         treatment_name: formData.treatment_name,

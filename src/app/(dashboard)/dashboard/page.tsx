@@ -1,5 +1,4 @@
 "use client";
-import StockChart from "@/components/charts/StockChart";
 import { signIn, useSession } from "next-auth/react";
 import WeatherChart from "@/components/charts/WeatherChart";
 import Footer from "@/components/footer/Footer";
@@ -9,13 +8,6 @@ import Header from "@/components/header/Header";
 import StockList from "@/components/page/Stock/StockList";
 
 export default function Dashboard() {
-  // Dashboard-д зориулж доорх талбаруудыг харуулна.
-  interface LivestockData {
-    stock_type: string;
-    _count: {
-      stock_type: number;
-    };
-  }
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

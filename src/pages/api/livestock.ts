@@ -19,13 +19,12 @@ export default async function handler(
       }
 
       const { stock_type, counts } = req.body;
-      
-      // Create new livestock with the logged-in herder's ID
+
       const newLivestock = await prisma.liveStock.create({
         data: {
           stock_type,
           counts: parseInt(counts),
-          owner_id: parseInt(session.user.id), // Use ownerId to match your schema
+          owner_id: parseInt(session.user.id), // Нэвтэрч орсон хэрэглэгч дээр бүртгэнэ. 
         },
       });
       

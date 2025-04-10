@@ -1,4 +1,5 @@
 import { create } from "@/app/(dashboard)/registration/create/action";
+import StockType from "@/models/StockType";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,13 +22,10 @@ export default function EventForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: session } = useSession();
-  const STOCK_TYPES = [
-    { id: 1, name: "Хонь" },
-    { id: 2, name: "Ямаа" },
-    { id: 3, name: "Адуу" },
-    { id: 4, name: "Үхэр" },
-    { id: 5, name: "Тэмээ" },
-  ];
+  const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+    id: parseInt(id),
+    name,
+  }));
   const EVENT_TYPES = [
     { type: "inc", name: "Нэмэгдсэн" },
     { type: "dec", name: "Хорогдсон" },

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StockChart from "@/components/charts/StockChart";
+import StockTypeMap from "@/models/StockTypeMap";
 
 type LiveStock = {
   id: number;
@@ -89,7 +90,7 @@ export default function StockList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 px-0">
       {liveStock.map((stock, index) => (
         <div
           key={index}
@@ -97,7 +98,7 @@ export default function StockList() {
         >
           <div>
             <h4 className="text-gray-700 text-lg font-semibold">
-              {stock.stock_type}
+              {StockTypeMap[stock.stock_type] ?? stock.stock_type}
             </h4>
             <p className="text-2xl font-bold text-gray-800">{stock.counts}</p>
           </div>

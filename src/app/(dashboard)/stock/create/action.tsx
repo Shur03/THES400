@@ -1,6 +1,7 @@
 "use server";
 
-import { EventType, PrismaClient, StockType } from "@prisma/client";
+import { PrismaClient, StockType } from "@prisma/client";
+import { auth } from "../../../../../lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,7 @@ export async function create(formData: {
   errors?: Record<string, string[]>;
 }> {
   try {
+    // Validate input
     if (!formData.type) {
       return {
         success: false,
@@ -26,10 +28,25 @@ export async function create(formData: {
         errors: { count: ["Тоо толгой 0-ээс их байх ёстой"] },
       };
     }
+    const session = await auth();
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        message: "Хэрэглэгчийн мэдээлэл олдсонгүй. Нэвтэрч орно уу.",
+      };
+    }
+    const validStockTypes = Object.values(StockType);
+    if (!validStockTypes.includes(formData.type as StockType)) {
+      return {
+        success: false,
+        errors: { type: ["Малын төрөл буруу байна"] },
+      };
+    }
 
-    const event = await prisma.liveStock.create({
+    // Create the record
+    const stock = await prisma.liveStock.create({
       data: {
-        owner_id: 1, // TODO: Replace with actual owner ID
+        owner_id: parseInt(session.user.id, 10),
         stock_type: formData.type as StockType,
         counts: formData.counts,
       },
@@ -40,11 +57,10 @@ export async function create(formData: {
       message: "Бүртгэл амжилттай хадгалагдлаа!",
     };
   } catch (error: any) {
-    console.error("Error creating event:", error);
+    console.error("Error creating livestock:", error);
     return {
       success: false,
       message: error.message || "Алдаа гарлаа, дахин оролдоно уу",
-      errors: error.errors,
     };
   } finally {
     await prisma.$disconnect();

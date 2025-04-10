@@ -3,14 +3,12 @@ import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { count } from "console";
+import StockType from "@/models/StockType";
 
-const STOCK_TYPES = [
-  { id: 1, name: "Хонь" },
-  { id: 2, name: "Ямаа" },
-  { id: 3, name: "Үхэр" },
-  { id: 4, name: "Адуу" },
-  { id: 5, name: "Тэмээ" },
-];
+const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+  id: parseInt(id),
+  name,
+}));
 
 export default function EditRegistration({
   params,

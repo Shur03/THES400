@@ -43,7 +43,7 @@ export default function TreatmentList() {
         const data = await response.json();
         setMedicalRecords(data);
       } catch (err) {
-        console.error("Error fetching medical records:", err);
+        console.error("Вакцинжуулалтыг харуулахад алдаа гарлаа:", err);
         setError(
           err instanceof Error
             ? err.message
@@ -85,15 +85,10 @@ export default function TreatmentList() {
     return (
       <Card className="text-center py-8 border-0 shadow-sm">
         <Card.Body className="flex flex-col items-center">
-          <NotepadText size={48} className="text-gray-400 mb-4" />
-          <h5 className="text-lg font-semibold mb-2">Бүртгэл байхгүй байна</h5>
-          <p className="text-gray-500 mb-4">Шинэ эмчилгээний бүртгэл нэмэх</p>
-          <Link href="/treatment/new" passHref>
-            <Button variant="primary" className="flex items-center gap-2">
-              <Plus size={18} />
-              Нэмэх
-            </Button>
-          </Link>
+          <NotepadText size={48} className="text-gray-800 mb-4" />
+          <h5 className="text-lg font-semibold mb-2 text-gray-700">
+            Бүртгэл байхгүй байна
+          </h5>
         </Card.Body>
       </Card>
     );
