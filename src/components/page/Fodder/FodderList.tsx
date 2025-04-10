@@ -15,7 +15,7 @@ export default function FodderList() {
   const [fodders, setFodders] = useState<FodderStock[]>([]);
 
   useEffect(() => {
-    fetch("/api/fodders") // Changed to the correct API endpoint
+    fetch("/api/fodders/purchase") // Changed to the correct API endpoint
       .then((res) => res.json())
       .then((data) => setFodders(data))
       .catch((error) => console.error("Error fetching fodder data:", error));

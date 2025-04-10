@@ -1,61 +1,33 @@
-import { z } from "zod";
+"use server";
 
-const schema = z.object({
-  type: z.string().min(3).max(255),
-  quamtity_used: z.number().min(0).max(255),
-  used_date: z.date(),
-  weight: z.number().min(0).max(255),
-  counts: z.number().min(0).max(255),
-  buy_date: z.date(),
-});
+import { PrismaClient } from "@prisma/client";
 
-type FormState = {
-  success: boolean;
-  message: string;
-  scrollTop: boolean;
-  formKey: number;
-  errors?: {
-    [key in keyof typeof schema.shape]?: string[];
-  };
-};
-export default async function create(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  //Өвс тэжээлийн бүртгэлийн талбаруудыг шалгах
-  const validatedFields = schema.safeParse({
-    type: formData.get("type"),
-    quamtity_used: formData.get("quamtity_used"),
-    used_date: formData.get("used_date"),
-    weight: formData.get("weight"),
-    counts: formData.get("counts"),
-    buy_date: formData.get("buy_date"),
-  });
-  // Амжилттай
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      scrollTop: false,
-      formKey: prevState.formKey,
-      message: "Validation error",
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
+const prisma = new PrismaClient();
 
-  // Алдаа
-  if (validatedFields.data.type === "error") {
-    return {
-      success: false,
-      scrollTop: true,
-      formKey: prevState.formKey,
-      message: "Алдаа гарлаа. Ахин оролдоно уу.",
-    };
-  } else {
-    return {
-      success: true,
-      scrollTop: true,
-      formKey: prevState.formKey + 1,
-      message: "Амжилттай хадгалагдлаа.",
-    };
+export async function create(formData: {
+  fodder_id: number;
+  type: string;
+  // quantity_used : number,
+  // used_date : Date,
+  weight: number;
+  counts: number;
+  buy_date: Date;
+}) {
+  try {
+    const treatment = prisma.fodderPurchase.create({
+      data: {
+        fodder_id: formData.fodder_id,
+        weight: formData.weight,
+        counts: formData.counts,
+        buy_date: formData.buy_date ? new Date(formData.buy_date) : new Date(),
+      },
+    });
+
+    return { success: true, treatment };
+  } catch (error) {
+    console.error("Error creating treatment:", error);
+    return { success: false, error: "Failed to create treatment" };
+  } finally {
+    await prisma.$disconnect();
   }
 }

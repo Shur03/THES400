@@ -1,4 +1,3 @@
-// filepath: c:\Users\HP\bsa\LiveStock\bsa-live\src\hooks\useRegister.ts
 import { useState } from "react";
 
 export function useRegister() {

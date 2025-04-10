@@ -10,7 +10,7 @@ import {
   FormLabel,
 } from "react-bootstrap";
 import { FodderStock } from "@/models/Fodder";
-import create from "@/app/(dashboard)/fodder/create/action";
+import { create } from "@/app/(dashboard)/fodder/create/action";
 
 type Props = {
   fodderList: FodderStock[];
@@ -59,15 +59,17 @@ export default function PurchaseForm({ fodderList }: Props) {
         formDataToSubmit.append(key, value);
       });
 
-      const response = await create(
-        { success: false, scrollTop: false, formKey: 0, message: "" }, // Example prevState
-        formDataToSubmit
-      );
+      const response = await create({
+        fodder_id: parseInt(formData.fodder_id, 10),
+        type: formData.type,
+        weight: parseFloat(formData.weight),
+        counts: parseInt(formData.counts, 10),
+        buy_date: new Date(formData.buy_date),
+      });
 
       if (response.success) {
-        setMessage("Фоддер амжилттай хадгалагдлаа!");
+        setMessage(" Амжилттай хадгалагдлаа!");
         setSuccess(true);
-        // Reset form after successful submission
         setFormData({
           fodder_id: "",
           type: "",

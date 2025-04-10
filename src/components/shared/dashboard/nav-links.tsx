@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -16,17 +15,43 @@ import { buttonVariants } from "../../ui/button";
 import { cn } from "@/app/lib/utils";
 
 const links = [
-  { name: "Нүүр", href: "dashboard", icon: HomeIcon },
-  { name: "Бүртгэл", href: "registration", icon: ClipboardPlus },
-  { name: "Өвс тэжээл", href: "fodder", icon: TreeDeciduous },
-  { name: "Эмчилгээ, вакцин", href: "treatment", icon: Syringe },
-  { name: "Тооцоолуур", href: "calculator", icon: Calculator },
+  { name: "Нүүр", href: "/dashboard", icon: HomeIcon },
+  { name: "Бүртгэл", href: "/registration", icon: ClipboardPlus },
+  { name: "Өвс тэжээл", href: "/fodder", icon: TreeDeciduous },
+  { name: "Эмчилгээ, вакцин", href: "/treatment", icon: Syringe },
+  { name: "Тооцоолуур", href: "/calculator", icon: Calculator },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+
+  const handleNavigation = (href: string) => {
+    setIsOpen(false);
+    router.replace(href);
+  };
+
+  const renderNavItem = (link: (typeof links)[0]) => {
+    const LinkIcon = link.icon;
+    const isActive = pathname === link.href;
+
+    return (
+      <button
+        key={link.name}
+        onClick={() => handleNavigation(link.href)}
+        className={cn(
+          buttonVariants({ variant: "ghost" }),
+          "justify-start w-full text-left",
+          isActive ? "bg-accent" : "text-muted-foreground"
+        )}
+      >
+        <LinkIcon className="mr-2 h-6 w-6" />
+        <span>{link.name}</span>
+      </button>
+    );
+  };
+
   return (
     <>
       {/* Mobile hamburger button */}
@@ -48,48 +73,12 @@ export default function NavLinks() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="mt-20 p-4">
-          {links.map((link) => {
-            const LinkIcon = link.icon;
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={cn(
-                  buttonVariants({ variant: "ghost" }),
-                  "w-full justify-start mb-2",
-                  pathname === link.href ? "" : "text-muted-foreground"
-                )}
-                onClick={() => setIsOpen(false)}
-              >
-                <LinkIcon className="mr-2 h-6 w-6" />
-                <span>{link.name}</span>
-              </Link>
-            );
-          })}
-        </div>
+        <div className="mt-20 p-4 space-y-2">{links.map(renderNavItem)}</div>
       </div>
 
       {/* Desktop menu */}
-      <div className="hidden md:block mt-10">
-        {links.map((link) => {
-          const LinkIcon = link.icon;
-          return (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => router.replace(link.href)}
-              className={cn(
-                buttonVariants({ variant: "ghost" }),
-                "justify-start",
-                pathname === link.href ? "" : "text-muted-foreground"
-              )}
-            >
-              <LinkIcon className="mr-2 h-6 w-6" />
-              <span>{link.name}</span>
-            </Link>
-          );
-        })}
+      <div className="hidden md:block mt-10 space-y-2">
+        {links.map(renderNavItem)}
       </div>
     </>
   );

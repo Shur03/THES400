@@ -12,7 +12,9 @@ import { Button } from "react-bootstrap";
 export default function Login() {
   const { submitting, error, handleLogin } = useLogin();
   const router = useRouter();
-
+  const handleClick = () => {
+    router.replace("/register"); // Hard navigation without adding to history
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
@@ -148,13 +150,14 @@ export default function Login() {
             <div className="text-center">
               <p className="text-sm text-gray-600">
                 Бүртгэлгүй юу?{" "}
-                <button
+                <Button
                   type="button"
-                  onClick={() => router.replace("/register")}
+                  // onClick={() => router.replace("/register")}
+                  onClick={handleClick}
                   className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                 >
                   Бүртгүүлэх
-                </button>
+                </Button>
               </p>
             </div>
           </form>

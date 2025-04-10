@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+// import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,16 +16,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "LiveStock Registration System",
-  description: "Shur Yeruult",
-};
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/login");
+  }, []);
   return (
     <html lang="en">
       <body
@@ -31,6 +33,7 @@ export default function RootLayout({
       >
         <div className="bg-[url(/img/bgImg.jpg)] bg-cover bg-center bg-no-repeat">
           <SessionProvider>{children}</SessionProvider>
+          {/* <Login /> */}
         </div>
       </body>
     </html>
