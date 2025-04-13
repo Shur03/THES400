@@ -6,13 +6,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "@/components/header/Header";
 import StockList from "@/components/page/Stock/StockList";
+import { Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const city = "Ulaanbaatar";
-
+  const router = useRouter();
   const { data: session, status } = useSession();
   useEffect(() => {
     const fetchWeather = async () => {
@@ -45,7 +47,16 @@ export default function Dashboard() {
   return (
     <div>
       <Header username={session.user?.name || "Guest"} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+      <div className="px-5">
+        <div className="mb-3 text-end pt-5">
+          <Button
+            variant="success"
+            className="text-white bg-green-400 rounded-lg p-2 "
+            onClick={() => router.push("/stock/create")}
+          >
+            + Бүртгэл нэмэх
+          </Button>
+        </div>
         <StockList />
       </div>
       <div className="px-5 w-full text-gray-800 rounded-lg">

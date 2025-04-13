@@ -5,7 +5,6 @@ import { auth } from '../../../../lib/auth';
 const prisma = new PrismaClient();
 
 export async function GET() {
-   // Get session on server side
    const session = await auth();
    if (!session?.user?.id) {
      return {
@@ -20,7 +19,7 @@ export async function GET() {
         owner_id: parseInt(session.user.id, 10),
       },
       orderBy: {
-        id: 'desc' // Optional: order by newest first
+        id: 'asc' 
       }
     });
 

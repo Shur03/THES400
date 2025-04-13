@@ -1,4 +1,3 @@
-// app/(dashboard)/registration/create/action.ts
 "use server";
 
 import { EventType, PrismaClient } from "@prisma/client";
@@ -17,7 +16,6 @@ export async function create(formData: {
   errors?: Record<string, string[]>;
 }> {
   try {
-    // Basic validation
     if (formData.stock_id <= 0) {
       return {
         success: false,

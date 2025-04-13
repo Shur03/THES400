@@ -41,7 +41,7 @@ type EventData = {
 
 export default function EventChart() {
   const [eventData, setEventData] = useState<EventData | null>(null);
-  const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
+  const [chartType, setChartType] = useState<"bar" | "line">("bar");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,8 +49,6 @@ export default function EventChart() {
       try {
         const response = await fetch("/api/events");
         const data = await response.json();
-
-        // Group data by livestock type
         const groupedData: Record<string, { inc: number; dec: number }> = {};
 
         data.forEach((event: any) => {
@@ -135,14 +133,6 @@ export default function EventChart() {
           >
             Шугаман
           </button>
-          <button
-            onClick={() => setChartType("pie")}
-            className={`px-3 py-1 rounded ${
-              chartType === "pie" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            Бялуу
-          </button>
         </div>
       </div>
 
@@ -190,41 +180,6 @@ export default function EventChart() {
                   title: {
                     display: true,
                     text: "Малын төрөл",
-                  },
-                },
-              },
-            }}
-          />
-        )}
-
-        {chartType === "pie" && (
-          <Pie
-            data={{
-              labels: eventData.labels,
-              datasets: [
-                {
-                  label: "Нийт тоо",
-                  data: eventData.datasets[0].data.map(
-                    (val, i) => val - eventData.datasets[1].data[i]
-                  ),
-                  backgroundColor: eventData.datasets[0].backgroundColor,
-                  borderColor: eventData.datasets[0].borderColor,
-                  borderWidth: 1,
-                },
-              ],
-            }}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: "right",
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      return `${context.label}: ${context.raw}`;
-                    },
                   },
                 },
               },

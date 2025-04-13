@@ -1,5 +1,4 @@
 "use client";
-// import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
@@ -33,7 +32,6 @@ export default function RootLayout({
       >
         <div className="bg-[url(/img/bgImg.jpg)] bg-cover bg-center bg-no-repeat">
           <SessionProvider>{children}</SessionProvider>
-          {/* <Login /> */}
         </div>
       </body>
     </html>

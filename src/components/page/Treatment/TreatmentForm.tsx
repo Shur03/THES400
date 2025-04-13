@@ -38,8 +38,6 @@ export default function TreatmentForm() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    // Clear previous messages
     setState({ message: "", success: false, errors: undefined });
     if (formData.stock_id <= 0) {
       setState({
@@ -70,13 +68,6 @@ export default function TreatmentForm() {
         });
         router.push("/treatment");
       }
-      // } else {
-      //   setState({
-      //     message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
-      //     success: false,
-      //     errors: result.errors,
-      //   });
-      // }
     } catch (error) {
       setState({
         message: "Алдаа гарлаа, дахин оролдоно уу",
@@ -199,20 +190,12 @@ export default function TreatmentForm() {
           </Button>
 
           <Button
-            type="button"
+            type="reset"
             variant="secondary"
-            onClick={() => {
-              setFormData({
-                stock_id: 0,
-                treatment_name: "",
-                descrip: "",
-                freq_date: "",
-              });
-              setState({ message: "", success: false });
-            }}
+            onClick={() => router.back()}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors"
           >
-            Цэвэрлэх
+            Буцах
           </Button>
         </div>
       </form>

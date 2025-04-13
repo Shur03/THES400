@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Alert,
-  Button,
-  Form as BSForm,
-  FormControl,
-  FormGroup,
-  FormLabel,
-} from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import { FodderStock } from "@/models/Fodder";
-import { create } from "@/app/(dashboard)/fodder/create/action";
+import { create } from "@/app/(dashboard)/fodder/purchase/create/action";
+import { useRouter } from "next/navigation";
 
 type Props = {
   fodderList: FodderStock[];
@@ -18,7 +12,6 @@ type Props = {
 
 export default function PurchaseForm({ fodderList }: Props) {
   const [formData, setFormData] = useState({
-    fodder_id: "",
     type: "",
     weight: "",
     counts: "",
@@ -32,7 +25,7 @@ export default function PurchaseForm({ fodderList }: Props) {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const router = useRouter();
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -60,7 +53,7 @@ export default function PurchaseForm({ fodderList }: Props) {
       });
 
       const response = await create({
-        fodder_id: parseInt(formData.fodder_id, 10),
+        // fodder_id: parseInt(formData.fodder_id, 10),
         type: formData.type,
         weight: parseFloat(formData.weight),
         counts: parseInt(formData.counts, 10),
@@ -71,7 +64,7 @@ export default function PurchaseForm({ fodderList }: Props) {
         setMessage(" Амжилттай хадгалагдлаа!");
         setSuccess(true);
         setFormData({
-          fodder_id: "",
+          // fodder_id: "",
           type: "",
           weight: "",
           counts: "",
@@ -79,7 +72,7 @@ export default function PurchaseForm({ fodderList }: Props) {
           price: "",
         });
       } else {
-        setMessage(response.message || "Алдаа гарлаа, дахин оролдоно уу.");
+        setMessage(response.error || "Алдаа гарлаа, дахин оролдоно уу.");
         setSuccess(false);
       }
     } catch (error) {
@@ -92,7 +85,6 @@ export default function PurchaseForm({ fodderList }: Props) {
 
   const handleReset = () => {
     setFormData({
-      fodder_id: "",
       type: "",
       weight: "",
       counts: "",
@@ -104,15 +96,14 @@ export default function PurchaseForm({ fodderList }: Props) {
   };
 
   return (
-    <BSForm
+    <form
       onSubmit={handleSubmit}
       onReset={handleReset}
-      className="p-6 bg-white rounded-lg shadow-md"
+      className="p-6 bg-white rounded-lg shadow-md text-gray-900"
     >
       <h2 className="text-xl font-bold mb-4 text-gray-800">
         Өвс, тэжээлийн худалдан авалт
       </h2>
-
       {message && (
         <Alert
           variant={success ? "success" : "danger"}
@@ -123,12 +114,11 @@ export default function PurchaseForm({ fodderList }: Props) {
           {message}
         </Alert>
       )}
-      <FormGroup className="mb-4">
-        <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Төрөл сонгох
-        </FormLabel>
-        <FormControl
-          as="select"
+        </label>
+        <select
           name="type"
           value={formData.type}
           onChange={handleChange}
@@ -138,14 +128,14 @@ export default function PurchaseForm({ fodderList }: Props) {
           <option value="">Төрөл сонгох...</option>
           <option value="uvs">Өвс</option>
           <option value="tej">Тэжээл</option>
-        </FormControl>
-      </FormGroup>
+        </select>
+      </div>
       {formData.type === "uvs" && (
-        <FormGroup className="mb-4">
-          <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Тоо ширхэг
-          </FormLabel>
-          <FormControl
+          </label>
+          <input
             type="number"
             name="counts"
             value={formData.counts}
@@ -155,15 +145,15 @@ export default function PurchaseForm({ fodderList }: Props) {
             min="0"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        </FormGroup>
+        </div>
       )}
 
       {formData.type === "tej" && (
-        <FormGroup className="mb-4">
-          <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Жин (кг)
-          </FormLabel>
-          <FormControl
+          </label>
+          <input
             type="number"
             name="weight"
             value={formData.weight}
@@ -174,13 +164,13 @@ export default function PurchaseForm({ fodderList }: Props) {
             step="0.01"
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        </FormGroup>
+        </div>
       )}
-      <FormGroup className="mb-4">
-        <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Худалдан авсан огноо
-        </FormLabel>
-        <FormControl
+        </label>
+        <input
           type="date"
           name="buy_date"
           value={formData.buy_date}
@@ -188,12 +178,12 @@ export default function PurchaseForm({ fodderList }: Props) {
           required
           className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
-      </FormGroup>
-      <FormGroup className="mb-4">
-        <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Нийт үнэ
-        </FormLabel>
-        <FormControl
+        </label>
+        <input
           type="number"
           name="price"
           value={formData.price}
@@ -203,7 +193,7 @@ export default function PurchaseForm({ fodderList }: Props) {
           min="0"
           className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
-      </FormGroup>
+      </div>
       <div className="flex gap-3 mt-6">
         <Button
           type="submit"
@@ -217,11 +207,12 @@ export default function PurchaseForm({ fodderList }: Props) {
         <Button
           type="reset"
           variant="secondary"
+          onClick={() => router.back()}
           className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors"
         >
-          Цэвэрлэх
+          Буцах
         </Button>
       </div>
-    </BSForm>
+    </form>
   );
 }

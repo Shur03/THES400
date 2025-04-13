@@ -1,26 +1,21 @@
 import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
-import StockTypeMap from "@/models/StockTypeMap";
+import FodderTypeMap from "@/models/FodderTypeMap";
 
-type MedicalRecord = {
-  id: number;
-  stock_id: number;
-  treatment_name: string;
-  counts: number;
-  descrip: string | null;
-  freq_date: string | null;
-  stock?: {
-    id: number;
-    stock_type?: string;
-  };
+type PurchaseRecords = {
+  id: 0;
+  type: "";
+  weight: "";
+  counts: "";
+  buy_date: "";
+  price: "";
 };
 
-export default function TreatmentList() {
+export default function PurchaseList() {
   const router = useRouter();
-  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+  const [purchaseRecords, setPurchaseRecords] = useState<PurchaseRecords[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +25,7 @@ export default function TreatmentList() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/treatments");
+        const response = await fetch("/api/fodders/purchase");
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -41,9 +36,9 @@ export default function TreatmentList() {
         }
 
         const data = await response.json();
-        setMedicalRecords(data);
+        setPurchaseRecords(data);
       } catch (err) {
-        console.error("Вакцинжуулалтыг харуулахад алдаа гарлаа:", err);
+        console.error("Бүртгэлийг харуулахад алдаа гарлаа:", err);
         setError(
           err instanceof Error
             ? err.message
@@ -81,7 +76,7 @@ export default function TreatmentList() {
     );
   }
 
-  if (medicalRecords.length === 0) {
+  if (purchaseRecords.length === 0) {
     return (
       <Card className="text-center py-8 border-0 shadow-sm">
         <Card.Body className="flex flex-col items-center">
@@ -93,13 +88,12 @@ export default function TreatmentList() {
       </Card>
     );
   }
-
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white text-gray-900 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-800">
-            Эмчилгээний бүртгэл
+            Худалдан авалтын бүртгэл
           </h2>
         </div>
 
@@ -111,16 +105,16 @@ export default function TreatmentList() {
                   №
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Вакцинжуулагдсан
+                  төрөл
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Вакцины нэр
+                  Хэмжээ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Тайлбар
+                  Үнэ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Дараагийн огноо
+                  Авсан огноо
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Үйлдэл
@@ -128,7 +122,7 @@ export default function TreatmentList() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {medicalRecords.map((record, index) => (
+              {purchaseRecords.map((record, index) => (
                 <tr
                   key={record.id}
                   className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
@@ -137,27 +131,26 @@ export default function TreatmentList() {
                     {index + 1}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {record.stock?.stock_type && (
+                    {record.type && (
                       <Badge
                         bg="info"
                         className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800"
                       >
-                        {StockTypeMap[record.stock.stock_type] ??
-                          record.stock.stock_type}
+                        {FodderTypeMap[record.type] ?? record.type}
                       </Badge>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                    {record.treatment_name}
+                    {record.weight}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                    {record.descrip || "-"}
+                    {record.price || "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {record.freq_date ? (
+                    {record.buy_date ? (
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CalendarDays size={16} className="text-gray-400" />
-                        {new Date(record.freq_date).toLocaleDateString()}
+                        {new Date(record.buy_date).toLocaleDateString()}
                       </div>
                     ) : (
                       "-"
@@ -169,7 +162,7 @@ export default function TreatmentList() {
                         variant="outline-primary"
                         size="sm"
                         onClick={() =>
-                          router.push(`/treatment/${record.id}/edit`)
+                          router.push(`/fodders/purchase/${record.id}/edit`)
                         }
                         className="p-1.5 rounded-full hover:bg-blue-50"
                       >
@@ -198,7 +191,7 @@ export default function TreatmentList() {
 async function handleDelete(id: number) {
   if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
     try {
-      const response = await fetch(`/api/treatments/${id}`, {
+      const response = await fetch(`/api/fodder/purchase/${id}`, {
         method: "DELETE",
       });
 

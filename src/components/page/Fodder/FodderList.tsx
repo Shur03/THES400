@@ -9,13 +9,11 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { FodderStock } from "@/models/Fodder";
-// import THSort from "../tableSort/THSort";
-
 export default function FodderList() {
   const [fodders, setFodders] = useState<FodderStock[]>([]);
 
   useEffect(() => {
-    fetch("/api/fodders/purchase") // Changed to the correct API endpoint
+    fetch("/api/fodders/purchase")
       .then((res) => res.json())
       .then((data) => setFodders(data))
       .catch((error) => console.error("Error fetching fodder data:", error));
@@ -24,21 +22,15 @@ export default function FodderList() {
   return (
     (fodders.length === 0 && (
       <div className="text-gray-900">Мэдээлэл байхгүй байна</div>
-    )) || ( // Display a message if there is no data
+    )) || (
       <Table responsive bordered hover>
         <thead>
           <tr className="table-light dark:table-dark">
             <th>№</th>
             <th>Төрөл</th>
-            <th>
-              <th>Тоо</th>
-            </th>
-            <th className="text-end">
-              <th>Жин</th>
-            </th>
-            <th className="text-end">
-              <th>Үнэ</th>
-            </th>
+            <th>Тоо</th>
+            <th>Жин</th>
+            <th>Үнэ</th>
             <th className="text-end">Худалдан авсан өдөр</th>
             <th aria-label="Action" />
           </tr>
@@ -59,9 +51,7 @@ export default function FodderList() {
                     bsPrefix="btn"
                     className="btn-link rounded-0 text-black-50 dark:text-gray-500 shadow-none p-0"
                     id={`action-${fodder.id}`}
-                  >
-                    {/* <FontAwesomeIcon fixedWidth icon={faEllipsisVertical} /> */}
-                  </DropdownToggle>
+                  ></DropdownToggle>
 
                   <DropdownMenu>
                     <DropdownItem href="#/action-1">Дэлгэрэнгүй</DropdownItem>

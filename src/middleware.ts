@@ -10,12 +10,12 @@ export default async function middleware(request: NextRequest) {
   const isLoggedIn = !!session?.user;
   const isLoginPage = request.nextUrl.pathname.startsWith('/login');
 
-  // If not logged in and NOT already going to login, redirect to login
+  // Нэвтэрч ороогүй бол login хуудас руу үсрэх
   if (!isLoggedIn && !isLoginPage) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // If logged in and trying to access login, redirect to home/dashboard
+  // Нэвтэрч орсон бол dashboard хуудас руу үсрэх
   if (isLoggedIn && isLoginPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }

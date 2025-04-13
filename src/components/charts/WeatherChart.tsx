@@ -5,7 +5,6 @@ const WeatherChart = ({ data }) => {
 
   return (
     <div className="relative max-w-[400px] w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-6 rounded-xl shadow-lg">
-      {/* Location and Date */}
       <div className="flex items-center justify-between">
         <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">
           {data.name}

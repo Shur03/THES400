@@ -14,7 +14,6 @@ export async function create(formData: {
   errors?: Record<string, string[]>;
 }> {
   try {
-    // Validate input
     if (!formData.type) {
       return {
         success: false,
@@ -43,7 +42,6 @@ export async function create(formData: {
       };
     }
 
-    // Create the record
     const stock = await prisma.liveStock.create({
       data: {
         owner_id: parseInt(session.user.id, 10),

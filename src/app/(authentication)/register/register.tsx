@@ -37,9 +37,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-4xl">
         {" "}
-        {/* Increased max width for better desktop layout */}
         <Card className="rounded-xl overflow-hidden shadow-lg border-0">
-          {/* Combined Header for both mobile and desktop */}
           <div className="bg-blue-600 p-6 text-center">
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
               Бүртгүүлэх
@@ -51,7 +49,6 @@ export default function RegisterPage() {
 
           <CardBody className="p-0">
             <div className="flex flex-col md:flex-row">
-              {/* Left side - could be used for image or additional content on desktop */}
               <div className="hidden md:flex md:w-1/2 bg-blue-50 items-center justify-center p-8">
                 <div className="text-center">
                   <svg
@@ -93,7 +90,6 @@ export default function RegisterPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Name Field */}
                   <div>
                     <label
                       htmlFor="name"
@@ -112,8 +108,6 @@ export default function RegisterPage() {
                       required
                     />
                   </div>
-
-                  {/* Phone Field */}
                   <div>
                     <label
                       htmlFor="phone"
@@ -132,8 +126,6 @@ export default function RegisterPage() {
                       required
                     />
                   </div>
-
-                  {/* Password Field */}
                   <div>
                     <label
                       htmlFor="password"
@@ -153,8 +145,6 @@ export default function RegisterPage() {
                       required
                     />
                   </div>
-
-                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={loading}
@@ -191,8 +181,6 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </form>
-
-                {/* Login Link */}
                 <div className="mt-6 text-center text-sm text-gray-600">
                   <p>
                     Бүртгэлтэй юу?{" "}

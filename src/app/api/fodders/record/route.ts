@@ -17,7 +17,7 @@ export async function GET() {
 
     const user_id = parseInt(session.user.id);
 
-    const fodderPurchase = await prisma.fodderPurchase.findMany({
+    const fodderRecord = await prisma.fodderRecord.findMany({
       where: {
         fodder: {
           owner_id: user_id
@@ -31,7 +31,7 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json(fodderPurchase);
+    return NextResponse.json(fodderRecord);
   } catch (error) {
     console.error('Error fetching fodder records:', error);
     return NextResponse.json(
@@ -55,7 +55,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: "Invalid fodder ID" }, { status: 400 });
     }
 
-    const existingfodder = await prisma.fodderPurchase.findUnique({
+    const existingfodder = await prisma.fodderRecord.findUnique({
       where: { id },
     });
 
@@ -63,7 +63,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: "fodder not found" }, { status: 404 });
     }
 
-    await prisma.fodderPurchase.delete({
+    await prisma.fodderRecord.delete({
       where: { id },
     });
 

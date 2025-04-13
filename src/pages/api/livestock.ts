@@ -11,7 +11,6 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     try {
-      // Get the current session - await this call!
       const session = await getServerSession(req, res, authOptions);
       
       if (!session?.user?.id) {

@@ -1,8 +1,7 @@
 "use client";
-import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
+import { Button, Spinner, Card } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
+import { NotepadText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StockChart from "@/components/charts/StockChart";
 import StockTypeMap from "@/models/StockTypeMap";
@@ -90,11 +89,11 @@ export default function StockList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 px-0">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4 p-4 px-0">
       {liveStock.map((stock, index) => (
         <div
           key={index}
-          className="bg-blue-300 rounded-xl p-4 shadow-md flex items-center justify-between"
+          className="bg-[#C1EEFF] rounded-xl p-4 shadow-md flex items-center justify-between"
         >
           <div>
             <h4 className="text-gray-700 text-lg font-semibold">
@@ -111,7 +110,6 @@ export default function StockList() {
   );
 }
 
-// Add this delete handler function
 async function handleDelete(id: number) {
   if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
     try {
@@ -120,7 +118,6 @@ async function handleDelete(id: number) {
       });
 
       if (response.ok) {
-        // Refresh the page or update state
         window.location.reload();
       } else {
         throw new Error("Устгах явцад алдаа гарлаа");

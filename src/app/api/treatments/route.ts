@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-// import { getServerSession } from "next-auth/next";
 import { auth, authOptions } from '../../../../lib/auth';
 
 
@@ -8,7 +7,6 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // Get the current session
     const session = await auth();
     
     if (!session?.user?.id) {
