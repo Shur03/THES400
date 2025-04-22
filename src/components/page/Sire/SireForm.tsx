@@ -1,0 +1,241 @@
+"use client";
+import { create } from "@/app/(dashboard)/sire/create/action";
+import BackButton from "@/components/shared/buttons/backButton";
+import StockType from "@/models/StockType";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
+
+interface SireFormProps {
+  mode?: "create" | "edit";
+  sireId?: string;
+}
+const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+  id: parseInt(id),
+  name,
+}));
+export default function SireForm({ mode = "create", sireId }: SireFormProps) {
+  const [formData, setFormData] = useState({
+    stock_id: 0,
+    name: "",
+    breed: "",
+    weight: "",
+    type: "",
+  });
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(mode === "edit");
+  const [state, setState] = useState<{
+    message: string;
+    success: boolean;
+    errors?: Record<string, string[]>;
+  }>({ message: "", success: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "stock_id" ? parseInt(value) || 0 : value,
+    }));
+  };
+  useEffect(() => {
+    if (mode === "edit" && sireId) {
+      const fetchSire = async () => {
+        try {
+          const response = await fetch(`/api/sires/${sireId}`);
+          if (!response.ok) throw new Error("Failed to fetch sire");
+          const data = await response.json();
+          setFormData({
+            stock_id: data.stock_id,
+            name: data.name,
+            breed: data.breed || "",
+            weight: data.weight,
+            type: data.type,
+            //  freq_date: data.freq_date ? data.freq_date.split("T")[0] : "",
+          });
+        } catch (error) {
+          console.error("Error fetching sire:", error);
+          setState({
+            message: "Алдаа гарлаа. Дахин оролдоно уу.",
+            success: false,
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchSire();
+    }
+  }, [mode, sireId]);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setState({ message: "", success: false, errors: undefined });
+    if (formData.stock_id <= 0) {
+      setState({
+        message: "Малын төрөл сонгоно уу!",
+        success: false,
+        errors: {
+          stock_id: ["Малын төрөл сонгоно уу"],
+        },
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const url = mode === "edit" ? `/api/sires/${sireId}` : "/api/sires";
+
+      const method = mode === "edit" ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        setState({
+          message:
+            mode === "edit"
+              ? "Бүртгэл амжилттай шинэчлэгдлээ!"
+              : "Бүртгэл амжилттай хадгалагдлаа!",
+          success: true,
+        });
+        router.push("/sire");
+      } else {
+        setState({
+          message: result.error || "Алдаа гарлаа, дахин оролдоно уу.",
+          success: false,
+          errors: result.errors,
+        });
+      }
+    } catch (error) {
+      setState({
+        message: "Алдаа гарлаа, дахин оролдоно уу",
+        success: false,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Малын бүртгэл</h2>
+
+      {state.message && (
+        <div
+          className={`mb-4 p-4 rounded-md ${
+            state.success
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          <div className="font-bold">
+            {state.success ? "Амжилттай!" : "Алдаа!"}
+          </div>
+          <div>{state.message}</div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="stock_type">
+            Малын төрөл
+          </label>
+          <div className="flex gap-2">
+            <select
+              id="stock_type"
+              name="stock_type"
+              value={formData.stock_id}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  stock_id: Number(e.target.value),
+                });
+              }}
+              className={`flex-1 px-3 py-2 border rounded-md ${
+                state.errors?.stock_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="0">-- Сонгох --</option>
+              {STOCK_TYPES.map((stock) => (
+                <option key={stock.id} value={stock.id}>
+                  {stock.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {state.errors?.stock_id && (
+            <p className="text-red-500 text-sm mt-1">
+              {state.errors.stock_id[0]}
+            </p>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="name">
+            Зүс
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className={`w-full px-3 py-2 border rounded-md ${
+              state.errors?.name ? "border-red-500" : ""
+            }`}
+          />
+          {state.errors?.name && (
+            <p className="text-red-500 text-sm mt-1">{state.errors.name[0]}</p>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="breed">
+            Үүлдэр
+          </label>
+          <textarea
+            id="breed"
+            name="breed"
+            value={formData.breed}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md"
+            rows={3}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="weight">
+            Жин
+          </label>
+          <input
+            type="number"
+            id="weight"
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        <div className="flex gap-3 mt-6">
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Хадгалаж байна..." : "Хадгалах"}
+          </Button>
+
+          <BackButton />
+        </div>
+      </form>
+    </div>
+  );
+}

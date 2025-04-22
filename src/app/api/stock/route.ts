@@ -16,7 +16,7 @@ export async function GET() {
     const liveStock = await prisma.liveStock.findMany({
       where: {
         //Нэвтэрч орсон хэрэглэгчийн мал сүргийн мэдээллийг харуулна.
-        owner_id: parseInt(session.user.id, 10),
+        owner_id: parseInt(session.user.id),
       },
       orderBy: {
         id: 'asc' 

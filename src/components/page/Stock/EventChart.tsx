@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,8 +12,9 @@ import {
   Legend,
   PointElement,
   LineElement,
-  ArcElement,
+  TimeScale,
 } from "chart.js";
+import "chartjs-adapter-date-fns";
 
 // Register ChartJS components
 ChartJS.register(
@@ -25,167 +26,320 @@ ChartJS.register(
   Legend,
   PointElement,
   LineElement,
-  ArcElement
+  TimeScale
 );
 
-type EventData = {
+type StockData = {
+  id: number;
+  stock_type: string;
+  counts: number;
+  date: string;
+  event_type: "inc" | "dec";
+};
+
+type ChartData = {
   labels: string[];
   datasets: {
     label: string;
     data: number[];
-    backgroundColor: string[];
-    borderColor: string[];
+    backgroundColor: string;
+    borderColor: string;
     borderWidth: number;
+    tension?: number;
   }[];
 };
 
 export default function EventChart() {
-  const [eventData, setEventData] = useState<EventData | null>(null);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
+  const [timeRange, setTimeRange] = useState<"week" | "month" | "year">(
+    "month"
+  );
   const [loading, setLoading] = useState(true);
+  const [selectedStock, setSelectedStock] = useState<string>("all");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/events");
-        const data = await response.json();
-        const groupedData: Record<string, { inc: number; dec: number }> = {};
+        const response = await fetch("/api/livestock/trends");
+        const data: StockData[] = await response.json();
 
-        data.forEach((event: any) => {
-          if (!groupedData[event.stock.name]) {
-            groupedData[event.stock.name] = { inc: 0, dec: 0 };
-          }
-          if (event.event_type === "inc") {
-            groupedData[event.stock.name].inc += event.counts;
-          } else {
-            groupedData[event.stock.name].dec += event.counts;
-          }
+        // Filter data by selected stock type if not "all"
+        const filteredData =
+          selectedStock === "all"
+            ? data
+            : data.filter((item) => item.stock_type === selectedStock);
+
+        // Group data by date and calculate net change
+        const dateMap = new Map<string, number>();
+
+        filteredData.forEach((item) => {
+          const change = item.event_type === "inc" ? item.counts : -item.counts;
+          const current = dateMap.get(item.date) || 0;
+          dateMap.set(item.date, current + change);
         });
 
-        const labels = Object.keys(groupedData);
-        const incData = labels.map((label) => groupedData[label].inc);
-        const decData = labels.map((label) => groupedData[label].dec);
+        // Sort dates chronologically
+        const sortedDates = Array.from(dateMap.keys()).sort(
+          (a, b) => new Date(a).getTime() - new Date(b).getTime()
+        );
 
-        const backgroundColors = [
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-          "rgba(255, 159, 64, 0.6)",
-        ];
+        // Calculate cumulative counts
+        let cumulativeCount = 0;
+        const cumulativeData = sortedDates.map((date) => {
+          cumulativeCount += dateMap.get(date) || 0;
+          return cumulativeCount;
+        });
 
-        setEventData({
-          labels,
+        const colors = {
+          bar: {
+            inc: "rgba(75, 192, 192, 0.6)",
+            dec: "rgba(255, 99, 132, 0.6)",
+            net: "rgba(54, 162, 235, 0.6)",
+          },
+          line: {
+            trend: "rgba(153, 102, 255, 0.6)",
+          },
+        };
+
+        setChartData({
+          labels: sortedDates,
           datasets: [
             {
-              label: "Нэмэгдсэн",
-              data: incData,
-              backgroundColor: backgroundColors,
-              borderColor: backgroundColors.map((color) =>
-                color.replace("0.6", "1")
-              ),
-              borderWidth: 1,
-            },
-            {
-              label: "Хорогдсон",
-              data: decData,
-              backgroundColor: backgroundColors.map((color) =>
-                color.replace("0.6", "0.4")
-              ),
-              borderColor: backgroundColors.map((color) =>
-                color.replace("0.6", "1")
-              ),
-              borderWidth: 1,
+              label: chartType === "bar" ? "Нийт өөрчлөлт" : "Хувьсал",
+              data: cumulativeData,
+              backgroundColor:
+                chartType === "bar" ? colors.bar.net : colors.line.trend,
+              borderColor:
+                chartType === "bar"
+                  ? colors.bar.net.replace("0.6", "1")
+                  : colors.line.trend.replace("0.6", "1"),
+              borderWidth: 2,
+              tension: chartType === "line" ? 0.4 : undefined,
             },
           ],
         });
       } catch (error) {
-        console.error("Error fetching event data:", error);
+        console.error("Error fetching livestock data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [chartType, timeRange, selectedStock]);
 
-  if (loading) return <div>Тооцоолж байна...</div>;
-  if (!eventData) return <div>Өгөгдөл олдсонгүй</div>;
+  if (loading)
+    return <div className="text-center py-8">Өгөгдөл ачаалж байна...</div>;
+  if (!chartData)
+    return <div className="text-center py-8">Өгөгдөл олдсонгүй</div>;
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Малын тооны өөрчлөлт</h2>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setChartType("bar")}
-            className={`px-3 py-1 rounded ${
-              chartType === "bar" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Малын тооны өөрчлөлтийн график
+        </h2>
+
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={selectedStock}
+            onChange={(e) => setSelectedStock(e.target.value)}
+            className="px-3 py-2 border rounded-md bg-white text-sm"
           >
-            Баар
-          </button>
-          <button
-            onClick={() => setChartType("line")}
-            className={`px-3 py-1 rounded ${
-              chartType === "line" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            Шугаман
-          </button>
+            <option value="all">Бүх төрөл</option>
+            <option value="sheep">Хонь</option>
+            <option value="goat">Ямаа</option>
+            <option value="cow">Үхэр</option>
+            <option value="horse">Адуу</option>
+            <option value="camel">Тэмээ</option>
+          </select>
+
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-md">
+            {["week", "month", "year"].map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range as any)}
+                className={`px-3 py-1 text-sm rounded ${
+                  timeRange === range
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                {range === "week"
+                  ? "7 хоног"
+                  : range === "month"
+                  ? "Сар"
+                  : "Жил"}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-md">
+            <button
+              onClick={() => setChartType("bar")}
+              className={`px-3 py-1 text-sm rounded ${
+                chartType === "bar"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200"
+              }`}
+            >
+              Баар
+            </button>
+            <button
+              onClick={() => setChartType("line")}
+              className={`px-3 py-1 text-sm rounded ${
+                chartType === "line"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200"
+              }`}
+            >
+              Шугаман
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="h-96">
-        {chartType === "bar" && (
+      <div className="h-96 w-full">
+        {chartType === "bar" ? (
           <Bar
-            data={eventData}
+            data={chartData}
             options={{
               responsive: true,
               maintainAspectRatio: false,
               scales: {
                 y: {
-                  beginAtZero: true,
+                  beginAtZero: false,
                   title: {
                     display: true,
                     text: "Тоо толгой",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                  grid: {
+                    color: "rgba(0, 0, 0, 0.05)",
                   },
                 },
                 x: {
                   title: {
                     display: true,
-                    text: "Малын төрөл",
+                    text: "Огноо",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                  grid: {
+                    display: false,
+                  },
+                },
+              },
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      const label = context.dataset.label || "";
+                      const value = context.raw as number;
+                      return `${label}: ${value} толгой`;
+                    },
+                  },
+                },
+                legend: {
+                  position: "top",
+                  labels: {
+                    boxWidth: 12,
+                    padding: 20,
+                    font: {
+                      size: 12,
+                    },
                   },
                 },
               },
             }}
           />
-        )}
-
-        {chartType === "line" && (
+        ) : (
           <Line
-            data={eventData}
+            data={chartData}
             options={{
               responsive: true,
               maintainAspectRatio: false,
               scales: {
                 y: {
-                  beginAtZero: true,
+                  beginAtZero: false,
                   title: {
                     display: true,
                     text: "Тоо толгой",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                  grid: {
+                    color: "rgba(0, 0, 0, 0.05)",
                   },
                 },
                 x: {
+                  type: "time",
+                  time: {
+                    unit:
+                      timeRange === "week"
+                        ? "day"
+                        : timeRange === "month"
+                        ? "week"
+                        : "month",
+                    displayFormats: {
+                      day: "MMM d",
+                      week: "MMM d",
+                      month: "MMM yyyy",
+                    },
+                  },
                   title: {
                     display: true,
-                    text: "Малын төрөл",
+                    text: "Огноо",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                  grid: {
+                    display: false,
+                  },
+                },
+              },
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      const label = context.dataset.label || "";
+                      const value = context.raw as number;
+                      return `${label}: ${value} толгой`;
+                    },
+                    title: (items) => {
+                      const date = new Date(items[0].label);
+                      return date.toLocaleDateString("mn-MN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      });
+                    },
+                  },
+                },
+                legend: {
+                  position: "top",
+                  labels: {
+                    boxWidth: 12,
+                    padding: 20,
+                    font: {
+                      size: 12,
+                    },
                   },
                 },
               },
             }}
           />
         )}
+      </div>
+
+      <div className="mt-4 text-sm text-gray-600">
+        <p>Сүүлийн шинэчлэлт: {new Date().toLocaleDateString("mn-MN")}</p>
       </div>
     </div>
   );

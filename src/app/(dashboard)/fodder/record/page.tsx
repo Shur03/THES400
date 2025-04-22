@@ -7,6 +7,8 @@ import Header from "@/components/header/Header";
 import { useSession } from "next-auth/react";
 import { signIn } from "../../../../../lib/auth";
 import RecordList from "@/components/page/Fodder/record/RecordList";
+import AddButton from "@/components/shared/buttons/addButton";
+import FodderList from "@/components/page/Fodder/FodderList";
 
 export default function Page() {
   const router = useRouter();
@@ -23,15 +25,11 @@ export default function Page() {
   return (
     <div className="mx-5 rounded-lg p-4">
       <Header username={session.user?.name ?? ""} />
-      <div className="mb-3 text-end pt-5">
-        <Button
-          variant="success"
-          className="text-white bg-green-400 rounded-lg p-2 "
-          onClick={() => router.push("/fodder/record/create")}
-        >
-          + Бүртгэл нэмэх
-        </Button>
+      <div className="flex flex-row justify-between items-center mb-4">
+        <FodderList />
+        <AddButton path="fodder/record" />
       </div>
+
       <RecordList />
       <Footer />
     </div>

@@ -1,73 +1,68 @@
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Table,
-} from "react-bootstrap";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+"use client";
 
-import { FodderStock } from "@/models/Fodder";
+import { TreeDeciduous } from "lucide-react";
+import { useEffect, useState } from "react";
+
+type Fodder = {
+  id: number;
+  type: string;
+  quantity: number;
+};
+
+// type FodderRecord = {
+//   id: number;
+//   quantity_used: number;
+//   used_date: string;
+//   fodder: Fodder;
+// };
+
 export default function FodderList() {
-  const [fodders, setFodders] = useState<FodderStock[]>([]);
+  const [records, setRecords] = useState<Fodder[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/fodders/purchase")
-      .then((res) => res.json())
-      .then((data) => setFodders(data))
-      .catch((error) => console.error("Error fetching fodder data:", error));
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/fodders");
+        const data = await res.json();
+        setRecords(data);
+      } catch (err) {
+        console.error("Failed to load fodder records:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
   return (
-    (fodders.length === 0 && (
-      <div className="text-gray-900">Мэдээлэл байхгүй байна</div>
-    )) || (
-      <Table responsive bordered hover>
-        <thead>
-          <tr className="table-light dark:table-dark">
-            <th>№</th>
-            <th>Төрөл</th>
-            <th>Тоо</th>
-            <th>Жин</th>
-            <th>Үнэ</th>
-            <th className="text-end">Худалдан авсан өдөр</th>
-            <th aria-label="Action" />
-          </tr>
-        </thead>
-        <tbody>
-          {fodders.map((fodder) => (
-            <tr key={fodder.id}>
-              <td>{fodder.id}</td>
-              <td className="text-bold">{fodder.types}</td>
-              <td className="text-bold">{fodder.types}</td>
-              <td className="text-end">
-                {/* {new Date(fodder.buyDate).toLocaleDateString()} */}
-              </td>
-              <td>
-                <Dropdown align="end">
-                  <DropdownToggle
-                    as="button"
-                    bsPrefix="btn"
-                    className="btn-link rounded-0 text-black-50 dark:text-gray-500 shadow-none p-0"
-                    id={`action-${fodder.id}`}
-                  ></DropdownToggle>
-
-                  <DropdownMenu>
-                    <DropdownItem href="#/action-1">Дэлгэрэнгүй</DropdownItem>
-                    <Link href={`/fodder/${fodder.id}/edit`} passHref>
-                      <DropdownItem>Засах</DropdownItem>
-                    </Link>
-                    <DropdownItem className="text-danger" href="#/action-3">
-                      Устгах
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </td>
-            </tr>
+    <div className="p-6">
+      {loading ? (
+        <p>Loading...</p>
+      ) : records.length === 0 ? (
+        <p>No records found.</p>
+      ) : (
+        <div className="overflow-x-auto grid grid-cols-2 gap-4">
+          {records.map((record) => (
+            <div className="bg-white w-full  rounded-lg shadow p-6 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    {record.type}
+                  </p>
+                  <p className="text-3xl font-semibold text-gray-800">
+                    {record.quantity}
+                  </p>
+                </div>
+                <div className="bg-gray-100 p-3 rounded-full">
+                  <TreeDeciduous className=" text-green-300" />
+                </div>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </Table>
-    )
+        </div>
+      )}
+    </div>
   );
 }

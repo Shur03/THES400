@@ -38,12 +38,14 @@ model Herder {
   phone    String  @unique
   stock    LiveStock[]
   fodders  FodderStock[]
+  notification Notification[]
 }
 
 model FodderStock {
   id       Int         @id @default(autoincrement())
   types    FodderType
   owner_id Int
+  quantity Float
   owner    Herder      @relation(fields: [owner_id], references: [id])
   records  FodderRecord[]
   purchase FodderPurchase[]
@@ -53,7 +55,7 @@ model FodderRecord {
   id          Int         @id @default(autoincrement())
   fodder_id   Int
   quantity_used Int
-  used_date   DateTime
+  used_date   DateTime?
   fodder      FodderStock @relation(fields: [fodder_id], references: [id])
 }
 
@@ -62,7 +64,8 @@ model FodderPurchase {
   fodder_id Int
   weight    Float?
   counts    Int?
-  buy_date  DateTime
+  price Int?
+  buy_date  DateTime?
   fodder    FodderStock @relation(fields: [fodder_id], references: [id])
 }
 
@@ -100,7 +103,19 @@ model MedicalRecord {
 model Sire {
   id       Int        @id @default(autoincrement())
   stock_id Int
+  name String?
   breed    String
+  age Int
   weight   Int?
+  year Int?
   stock    LiveStock @relation(fields: [stock_id], references: [id])
+}
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user Herder @relation(fields: [user_id], references: [id])
 }

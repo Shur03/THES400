@@ -1,5 +1,4 @@
 "use server";
-
 import { PrismaClient, StockType } from "@prisma/client";
 import { auth } from "../../../../../lib/auth";
 
@@ -27,6 +26,7 @@ export async function create(formData: {
         errors: { count: ["Тоо толгой 0-ээс их байх ёстой"] },
       };
     }
+
     const session = await auth();
     if (!session?.user?.id) {
       return {
@@ -34,6 +34,7 @@ export async function create(formData: {
         message: "Хэрэглэгчийн мэдээлэл олдсонгүй. Нэвтэрч орно уу.",
       };
     }
+
     const validStockTypes = Object.values(StockType);
     if (!validStockTypes.includes(formData.type as StockType)) {
       return {
@@ -42,7 +43,23 @@ export async function create(formData: {
       };
     }
 
-    const stock = await prisma.liveStock.create({
+    // ✅ Шинээр нэмэхийн өмнө тухайн хэрэглэгч тухайн төрлийг бүртгэсэн эсэхийг шалгах
+    const existing = await prisma.liveStock.findFirst({
+      where: {
+        owner_id: parseInt(session.user.id, 10),
+        stock_type: formData.type as StockType,
+      },
+    });
+
+    if (existing) {
+      return {
+        success: false,
+        message: "Энэ төрлийн мал өмнө нь бүртгэгдсэн байна.",
+      };
+    }
+
+    // ✅ Хадгалах
+    await prisma.liveStock.create({
       data: {
         owner_id: parseInt(session.user.id, 10),
         stock_type: formData.type as StockType,

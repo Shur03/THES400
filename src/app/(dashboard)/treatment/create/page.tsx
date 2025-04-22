@@ -1,6 +1,11 @@
 "use client";
-import TreatmentForm from "@/components/page/Treatment/TreatmentForm";
+import AddButton from "@/components/shared/buttons/addButton";
+import TreatmentForm from "../../../../components/page/Treatment/TreatmentForm";
 
 export default function Page() {
-  return <TreatmentForm />;
+  return (
+    <div>
+      <TreatmentForm mode="create" />
+    </div>
+  );
 }

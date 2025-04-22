@@ -4,15 +4,15 @@ import { signIn, useSession } from "next-auth/react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  if (!session) {
-    return (
-      <div>
-        <button className="bg-blue-400 text-gray-900" onClick={() => signIn()}>
-          Нэвтрэх
-        </button>
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div>
+  //       <button className="bg-blue-400 text-gray-900" onClick={() => signIn()}>
+  //         Нэвтрэх
+  //       </button>
+  //     </div>
+  //   );
+  // }
   return (
     <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
       <div className="w-full flex-none md:w-52 bg-gray-800">

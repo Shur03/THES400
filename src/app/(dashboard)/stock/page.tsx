@@ -6,7 +6,6 @@ export default function Page() {
     <div>
       <h1>Малын бүртгэл</h1>
       <StockForm />
-      <StockList />
     </div>
   );
 }

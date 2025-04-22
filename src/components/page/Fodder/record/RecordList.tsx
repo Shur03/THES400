@@ -1,14 +1,20 @@
 import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
+import { NotepadText, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 import FodderTypeMap from "@/models/FodderTypeMap";
+import { DeleteButton } from "@/components/shared/buttons/deleteButton";
+import { EditButton } from "@/components/shared/buttons/editButton";
 
 type Records = {
   id: 0;
-  type: "";
+  // type: "";
   quantity_used: 0;
   used_date: "";
+  fodder?: {
+    id: number;
+    type?: string;
+  };
 };
 
 export default function RecordList() {
@@ -80,7 +86,7 @@ export default function RecordList() {
         <Card.Body className="flex flex-col items-center">
           <NotepadText size={48} className="text-gray-800 mb-4" />
           <h5 className="text-lg font-semibold mb-2 text-gray-700">
-            Бүртгэл байхгүй байна
+            Одоогоор бүртгэл үүсээгүй байна. Нэмнэ үү.
           </h5>
         </Card.Body>
       </Card>
@@ -109,7 +115,7 @@ export default function RecordList() {
                   Хэмжээ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Авсан огноо
+                  Зарцуулсан огноо
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Үйлдэл
@@ -120,23 +126,22 @@ export default function RecordList() {
               {records.map((record, index) => (
                 <tr
                   key={record.id}
-                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {record.type && (
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    {record.fodder?.type && (
                       <Badge
                         bg="info"
                         className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800"
                       >
-                        {FodderTypeMap[record.type] ?? record.type}
+                        {FodderTypeMap[record.fodder.type] ??
+                          record.fodder.type}
                       </Badge>
                     )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                    {record.type}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                     {record.quantity_used || "-"}
@@ -153,24 +158,12 @@ export default function RecordList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex gap-3">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() =>
-                          router.push(`/fodders/record/${record.id}/edit`)
-                        }
-                        className="p-1.5 rounded-full hover:bg-blue-50"
-                      >
-                        <Pencil size={16} className="text-blue-600" />
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleDelete(record.id)}
-                        className="p-1.5 rounded-full hover:bg-red-50"
-                      >
-                        <Trash2 size={16} className="text-red-600" />
-                      </Button>
+                      <EditButton id={record.id} path="fodder/record" />
+                      <DeleteButton
+                        id={record.id}
+                        endpoint="fodders/record"
+                        itemName="энэ бүртгэл"
+                      />
                     </div>
                   </td>
                 </tr>
@@ -181,23 +174,4 @@ export default function RecordList() {
       </div>
     </div>
   );
-}
-
-async function handleDelete(id: number) {
-  if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
-    try {
-      const response = await fetch(`/api/fodder/record/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        throw new Error("Устгах явцад алдаа гарлаа");
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Устгах явцад алдаа гарлаа. Дахин оролдоно уу.");
-    }
-  }
 }

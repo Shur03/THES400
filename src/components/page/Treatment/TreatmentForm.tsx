@@ -1,29 +1,69 @@
-import { create } from "@/app/(dashboard)/treatment/create/action";
-import StockType from "@/models/StockType";
+"use client";
+import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Button, Alert } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import StockType from "@/models/StockType";
 
-export default function TreatmentForm() {
+const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+  id: parseInt(id),
+  name,
+}));
+
+interface TreatmentFormProps {
+  mode?: "create" | "edit";
+  treatmentId?: string;
+}
+
+export default function TreatmentForm({
+  mode = "create",
+  treatmentId,
+}: TreatmentFormProps) {
   const [formData, setFormData] = useState({
+    id: 0,
     stock_id: 0,
     treatment_name: "",
     descrip: "",
     freq_date: "",
   });
-  const router = useRouter();
-  const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
-    id: parseInt(id),
-    name,
-  }));
 
-  const [loadingTypes, setLoadingTypes] = useState(true);
   const [state, setState] = useState<{
     message: string;
     success: boolean;
     errors?: Record<string, string[]>;
   }>({ message: "", success: false });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(mode === "edit");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (mode === "edit" && treatmentId) {
+      const fetchTreatment = async () => {
+        try {
+          const response = await fetch(`/api/treatments/${treatmentId}`);
+          if (!response.ok) throw new Error("Failed to fetch treatment");
+          const data = await response.json();
+          setFormData({
+            id: data.id,
+            stock_id: data.stock_id,
+            treatment_name: data.treatment_name,
+            descrip: data.descrip || "",
+            freq_date: data.freq_date ? data.freq_date.split("T")[0] : "",
+          });
+        } catch (error) {
+          console.error("Error fetching treatment:", error);
+          setState({
+            message: "Алдаа гарлаа. Дахин оролдоно уу.",
+            success: false,
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchTreatment();
+    }
+  }, [mode, treatmentId]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -39,13 +79,12 @@ export default function TreatmentForm() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setState({ message: "", success: false, errors: undefined });
+
     if (formData.stock_id <= 0) {
       setState({
         message: "Малын төрөл сонгоно уу!",
         success: false,
-        errors: {
-          stock_id: ["Малын төрөл сонгоно уу"],
-        },
+        errors: { stock_id: ["Малын төрөл сонгоно уу"] },
       });
       return;
     }
@@ -53,24 +92,38 @@ export default function TreatmentForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await create(formData);
+      const url =
+        mode === "edit" ? `/api/treatments/${treatmentId}` : "/api/treatments";
 
-      if (result.success) {
+      const method = mode === "edit" ? "PUT" : "create";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
         setState({
-          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
+          message:
+            mode === "edit"
+              ? "Вакцин амжилттай шинэчлэгдлээ!"
+              : "Вакцинжуулалтын бүртгэл амжилттай хадгалагдлаа!",
           success: true,
         });
-        setFormData({
-          stock_id: 0,
-          treatment_name: "",
-          descrip: "",
-          freq_date: "",
-        });
         router.push("/treatment");
+      } else {
+        setState({
+          message: result.error || "Алдаа гарлаа, дахин оролдоно уу.",
+          success: false,
+          errors: result.errors,
+        });
       }
     } catch (error) {
       setState({
-        message: "Алдаа гарлаа, дахин оролдоно уу",
+        message: "Алдаа гарлаа. Дахин оролдоно уу.",
         success: false,
       });
     } finally {
@@ -78,59 +131,55 @@ export default function TreatmentForm() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-2 text-sm text-gray-800">Ачаалж байна...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Эмчилгээний бүртгэл</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        {mode === "edit" ? "Эмчилгээ засварлах" : "Эмчилгээний бүртгэл"}
+      </h2>
 
       {state.message && (
-        <div
-          className={`mb-4 p-4 rounded-md ${
-            state.success
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          <div className="font-bold">
-            {state.success ? "Амжилттай!" : "Алдаа!"}
-          </div>
-          <div>{state.message}</div>
-        </div>
+        <Alert variant={state.success ? "success" : "danger"}>
+          {state.message}
+        </Alert>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="stock_type">
+          <label className="block text-gray-700 mb-2" htmlFor="stock_id">
             Малын төрөл
           </label>
-          <div className="flex gap-2">
-            <select
-              id="stock_type"
-              name="stock_type"
-              value={formData.stock_id}
-              onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  stock_id: Number(e.target.value),
-                });
-              }}
-              className={`flex-1 px-3 py-2 border rounded-md ${
-                state.errors?.stock_id ? "border-red-500" : ""
-              }`}
-            >
-              <option value="0">-- Сонгох --</option>
-              {STOCK_TYPES.map((stock) => (
-                <option key={stock.id} value={stock.id}>
-                  {stock.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            id="stock_id"
+            name="stock_id"
+            value={formData.stock_id}
+            onChange={handleChange}
+            className={`w-full px-3 py-2 border rounded-md ${
+              state.errors?.stock_id ? "border-red-500" : ""
+            }`}
+          >
+            <option value="0">-- Сонгох --</option>
+            {STOCK_TYPES.map((stock) => (
+              <option key={stock.id} value={stock.id}>
+                {stock.name}
+              </option>
+            ))}
+          </select>
           {state.errors?.stock_id && (
             <p className="text-red-500 text-sm mt-1">
               {state.errors.stock_id[0]}
             </p>
           )}
         </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="treatment_name">
             Вакцины нэр
@@ -151,6 +200,7 @@ export default function TreatmentForm() {
             </p>
           )}
         </div>
+
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="descrip">
             Тайлбар
@@ -186,13 +236,17 @@ export default function TreatmentForm() {
             disabled={isSubmitting}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Хадгалаж байна..." : "Хадгалах"}
+            {isSubmitting
+              ? "Хадгалаж байна..."
+              : mode === "edit"
+              ? "Шинэчлэх"
+              : "Хадгалах"}
           </Button>
 
           <Button
-            type="reset"
+            type="button"
             variant="secondary"
-            onClick={() => router.back()}
+            onClick={() => router.push("/treatment")}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors"
           >
             Буцах

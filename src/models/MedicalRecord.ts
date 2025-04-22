@@ -1,11 +1,13 @@
-import { LiveStock } from "./LiveStock";
 
-export interface MedicalRecord {
+export type MedicalRecord = {
+  id: number;
+  stock_id: number;
+  treatment_name: string;
+  counts: number;
+  descrip: string | null;
+  freq_date: string | null;
+  stock?: {
     id: number;
-    stock_id: number;
-    treatment_name: string;
-    counts: number;
-    descrip?: string;
-    freq_date?: Date;
-    stock: LiveStock;
+    stock_type?: string;
+  };
   }

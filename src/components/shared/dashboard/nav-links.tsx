@@ -6,6 +6,7 @@ import {
   ChevronUp,
   ClipboardPlus,
   HomeIcon,
+  MapPin,
   Menu,
   Syringe,
   TreeDeciduous,
@@ -15,7 +16,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 const links = [
   { name: "Нүүр", href: "/dashboard", icon: HomeIcon },
-  { name: "Бүртгэл", href: "/registration", icon: ClipboardPlus },
+  { name: "Өсөлт хорогдол", href: "/registration", icon: ClipboardPlus },
   {
     name: "Өвс тэжээл",
     icon: TreeDeciduous,
@@ -27,6 +28,7 @@ const links = [
   { name: "Эмчилгээ, вакцин", href: "/treatment", icon: Syringe },
   { name: "Sire", href: "/sire", icon: Syringe },
   { name: "Тооцоолуур", href: "/calculator", icon: Calculator },
+  { name: "Байршил", href: "/geo", icon: MapPin },
 ];
 
 export default function NavLinks() {
@@ -98,7 +100,7 @@ export default function NavLinks() {
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "justify-start w-full text-left",
-          isActive ? "bg-accent text-[#333333]" : "text-muted-foreground"
+          isActive ? "bg-accent text-white" : "text-muted-foreground"
         )}
       >
         {link.icon && <link.icon className="mr-2 h-6 w-6" />}
@@ -124,7 +126,7 @@ export default function NavLinks() {
       {/* Mobile menu */}
       <div
         className={cn(
-          "md:hidden fixed inset-0 z-40 bg-blue-200 text-gray-800 w-2/3 transition-transform duration-300 ease-in-out",
+          "md:hidden fixed inset-0 z-40 bg-blue-600 text-gray-200 w-2/3 transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

@@ -1,26 +1,13 @@
 "use client";
 
 import Login from "@/app/(authentication)/login/login";
-import FodderChart from "@/components/charts/FodderChart";
 import Footer from "@/components/footer/Footer";
 import Header from "@/components/header/Header";
-import FodderList from "@/components/page/Fodder/FodderList";
 import TreatmentList from "@/components/page/Treatment/TreatmentList";
-import { Calendar, Clock } from "lucide-react";
+import AddButton from "@/components/shared/buttons/addButton";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  ListGroup,
-} from "react-bootstrap";
+import { Button, Card, CardBody } from "react-bootstrap";
 
 interface UpcomingTreatment {
   id: string;
@@ -89,16 +76,7 @@ export default function Page() {
         )}
       </div> */}
       <CardBody>
-        <div className="mb-3 text-end pt-5">
-          <Button
-            variant="success"
-            className="text-white bg-green-400 rounded-lg p-2 "
-            onClick={() => router.push("/treatment/create")}
-          >
-            + Бүртгэл нэмэх
-          </Button>
-        </div>
-
+        <AddButton path="treatment" />
         <TreatmentList />
       </CardBody>
       <Footer />

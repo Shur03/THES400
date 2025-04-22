@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Note: Changed from next/router to next/navigation
 import { create } from "@/app/(dashboard)/stock/create/action";
+import BackButton from "@/components/shared/buttons/backButton";
+import { Button } from "react-bootstrap";
+import SaveButton from "@/components/shared/buttons/saveButton";
 
 const STOCK_TYPES = [
   { id: "sheep", name: "Хонь" },
@@ -65,7 +68,7 @@ export default function StockForm() {
           type: "",
           counts: 0,
         });
-        router.push("/stock");
+        router.push("/dashboard");
       } else {
         setState({
           message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
@@ -94,7 +97,7 @@ export default function StockForm() {
   };
 
   return (
-    <div className="text-gray-900">
+    <div className="text-gray-900 max-w-md mx-auto ">
       {state.message && (
         <div
           className={`mb-4 p-4 rounded-md ${
@@ -145,15 +148,8 @@ export default function StockForm() {
           />
         </div>
         {error && <div className="text-red-500 text-sm">{error}</div>}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
-            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {isSubmitting ? "Бүртгэж байна..." : "Малын бүртгэл нэмэх"}
-        </button>
+        <SaveButton />
+        <BackButton />
       </form>
     </div>
   );

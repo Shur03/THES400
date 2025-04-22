@@ -81,7 +81,7 @@ export default function StockList() {
         <Card.Body className="flex flex-col items-center">
           <NotepadText size={48} className="text-gray-400 mb-4" />
           <h5 className="text-lg text-gray-800 font-semibold mb-2">
-            Бүртгэл байхгүй байна
+            Одоогоор бүртгэл үүсээгүй байна. Нэмнэ үү.
           </h5>
         </Card.Body>
       </Card>
@@ -108,23 +108,4 @@ export default function StockList() {
       ))}
     </div>
   );
-}
-
-async function handleDelete(id: number) {
-  if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
-    try {
-      const response = await fetch(`/api/events/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        throw new Error("Устгах явцад алдаа гарлаа");
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Устгах явцад алдаа гарлаа. Дахин оролдоно уу.");
-    }
-  }
 }

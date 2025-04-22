@@ -4,6 +4,7 @@ import Footer from "@/components/footer/Footer";
 import Header from "@/components/header/Header";
 import EventChart from "@/components/page/Stock/EventChart";
 import EventList from "@/components/page/Stock/EventList";
+import AddButton from "@/components/shared/buttons/addButton";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,7 +23,7 @@ export default function Page() {
   }>({ message: "", success: false });
   const { data: session, status } = useSession();
   if (!session) {
-    return <p>Нэвтэрнэ үү</p>;
+    return <p className="text-gray-900">Нэвтэрнэ үү</p>;
   }
   return (
     <div>
@@ -30,13 +31,7 @@ export default function Page() {
       <div className="h-4">
         {/** Өсөлт хорогдлыг графикаар харуулах */}
         <EventChart />
-        <Button
-          variant="success"
-          className="text-white bg-green-400 text-sm lg:text-lg rounded-lg p-2 mt-3  "
-          onClick={() => router.push("/registration/create")}
-        >
-          + Нэмэх
-        </Button>
+        <AddButton path="registration" />
         <EventList />
         <Footer />
       </div>

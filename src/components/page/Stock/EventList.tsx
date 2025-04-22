@@ -1,10 +1,11 @@
 import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Plus, NotepadText, Trash2, Pencil, CalendarDays } from "lucide-react";
+import { NotepadText, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StockTypeMap from "@/models/StockTypeMap";
 import EventTypeMap from "@/models/EventTypeMap";
+import { DeleteButton } from "@/components/shared/buttons/deleteButton";
+import { EditButton } from "@/components/shared/buttons/editButton";
 
 type EventRecord = {
   id: number;
@@ -88,7 +89,7 @@ export default function EventList() {
         <Card.Body className="flex flex-col items-center">
           <NotepadText size={48} className="text-gray-400 mb-4" />
           <h5 className="text-lg text-gray-800 font-semibold mb-2">
-            Бүртгэл байхгүй байна
+            Одоогоор бүртгэл үүсээгүй байна. Нэмнэ үү.
           </h5>
         </Card.Body>
       </Card>
@@ -98,20 +99,6 @@ export default function EventList() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg lg:text-xl text-gray-800">
-            Өсөлт хорогдлын бүртгэл
-          </h2>
-
-          <Button
-            variant="success"
-            className="text-white bg-green-400 text-sm lg:text-lg rounded-lg p-2 mt-3  "
-            onClick={() => router.push("/registration/create")}
-          >
-            + Нэмэх
-          </Button>
-        </div>
-
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
           <Table className="min-w-full">
@@ -181,24 +168,12 @@ export default function EventList() {
                   </td>
                   <td className="px-6 py-4 text-right text-sm">
                     <div className="flex gap-2 justify-end">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() =>
-                          router.push(`/registration/${record.id}/edit`)
-                        }
-                        className="p-1.5 rounded-full hover:bg-blue-50"
-                      >
-                        <Pencil size={16} className="text-blue-600" />
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleDelete(record.id)}
-                        className="p-1.5 rounded-full hover:bg-red-50"
-                      >
-                        <Trash2 size={16} className="text-red-600" />
-                      </Button>
+                      <EditButton id={record.id} path="registration" />
+                      <DeleteButton
+                        id={record.id}
+                        endpoint="events"
+                        itemName="энэ бүртгэл"
+                      />
                     </div>
                   </td>
                 </tr>
@@ -246,14 +221,11 @@ export default function EventList() {
                 >
                   Засах
                 </Button>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleDelete(record.id)}
-                  className="flex-1"
-                >
-                  Устгах
-                </Button>
+                <DeleteButton
+                  id={record.id}
+                  endpoint="events"
+                  itemName="энэ бүртгэл"
+                />
               </div>
             </div>
           ))}
@@ -261,25 +233,4 @@ export default function EventList() {
       </div>
     </div>
   );
-}
-
-// Add this delete handler function
-async function handleDelete(id: number) {
-  if (confirm("Та энэ эмчилгээг устгахдаа итгэлтэй байна уу?")) {
-    try {
-      const response = await fetch(`/api/events/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        // Refresh the page or update state
-        window.location.reload();
-      } else {
-        throw new Error("Устгах явцад алдаа гарлаа");
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("Устгах явцад алдаа гарлаа. Дахин оролдоно уу.");
-    }
-  }
 }

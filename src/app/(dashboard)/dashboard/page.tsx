@@ -8,6 +8,7 @@ import Header from "@/components/header/Header";
 import StockList from "@/components/page/Stock/StockList";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
+import AddButton from "@/components/shared/buttons/addButton";
 
 export default function Dashboard() {
   const [weather, setWeather] = useState(null);
@@ -41,22 +42,15 @@ export default function Dashboard() {
   }
 
   if (!session) {
-    return <p>Нэвтэрнэ үү.</p>;
+    router.push("login");
+    return <p className="text-gray-900">Нэвтэрнэ үү.</p>;
   }
 
   return (
     <div>
       <Header username={session.user?.name || "Guest"} />
       <div className="px-5">
-        <div className="mb-3 text-end pt-5">
-          <Button
-            variant="success"
-            className="text-white bg-green-400 rounded-lg p-2 "
-            onClick={() => router.push("/stock/create")}
-          >
-            + Бүртгэл нэмэх
-          </Button>
-        </div>
+        <AddButton path="stock" />
         <StockList />
       </div>
       <div className="px-5 w-full text-gray-800 rounded-lg">
