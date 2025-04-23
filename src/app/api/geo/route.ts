@@ -43,15 +43,18 @@ export async function GET(request: Request) {
   const distanceAB = haversineDistance(A, B);
   const distanceAC = haversineDistance(A, C);
 
+  const distance = distanceAC - distanceAB;
   const result = distanceAC <= distanceAB ? "Бүс дотор байна" : "Бүсээс гарсан";
 
   return NextResponse.json({
     coordinates: { A, B, C },
     distances: {
-      A_to_B: `${distanceAB.toFixed(2)} км`,
-      A_to_C: `${distanceAC.toFixed(2)} км`,
+      A_to_B: `${distanceAB.toFixed(2)} `,
+      A_to_C: `${distanceAC.toFixed(2)} `,
+      distance : `${distance.toFixed(2)} `,
     },
-    radius: `${distanceAB.toFixed(2)} км`,
+    radius: `${distanceAB.toFixed(2)} `,
     result,
+    
   });
 }

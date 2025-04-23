@@ -18,6 +18,7 @@ interface UpcomingTreatment {
 
 export default function Page() {
   const router = useRouter();
+  const pageName = "Вакцинжуулалтын бүртгэл";
   const { data: session, status } = useSession();
   if (status === "loading") {
     return (
@@ -38,7 +39,7 @@ export default function Page() {
   }
   return (
     <Card>
-      <Header username={session.user?.name || "Guest"} />
+      <Header pageName={pageName} username={session.user?.name || "Guest"} />
       {/* <div className="col-sm-6 col-lg-4 w-2/5 bg-blue-200 text-gray-900 rounded-lg p-3 rounded-3 mt-5 ">
         <h5 className="text-primary mb-3 text-sm">Ойролцоох вакцинжуулалт</h5>
 

@@ -8,10 +8,11 @@ import NotificationDropdown from "../notifications/notification-dropdown";
 import { useState } from "react";
 
 interface HeaderProps {
+  pageName: string;
   username: string;
 }
 
-export default function Header({ username }: HeaderProps) {
+export default function Header({ pageName, username }: HeaderProps) {
   const { data: session } = useSession();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State to toggle visibility
 
@@ -23,8 +24,8 @@ export default function Header({ username }: HeaderProps) {
     <header className="bg-gray-100 shadow-md p-4 rounded-lg mb-3">
       <div className="container mx-auto flex justify-between items-center rounded-lg">
         <Link href="/" className="text-xl text-gray-800">
-          <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            Малчны туслах
+          <span className="text-md lg:text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            {pageName}
           </span>
         </Link>
 

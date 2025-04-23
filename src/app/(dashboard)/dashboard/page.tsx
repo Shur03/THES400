@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const city = "Ulaanbaatar";
   const router = useRouter();
+  const pageName = "Малчны бүртгэл";
   const { data: session, status } = useSession();
   useEffect(() => {
     const fetchWeather = async () => {
@@ -48,12 +49,12 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Header username={session.user?.name || "Guest"} />
+      <Header pageName={pageName} username={session.user?.name || "Guest"} />
       <div className="px-5">
         <AddButton path="stock" />
         <StockList />
       </div>
-      <div className="px-5 w-full text-gray-800 rounded-lg">
+      <div className="px-5 w-full text-gray-800 rounded-lg mt-5">
         {loading && <p className="text-white text-center">Уншиж байна...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
         {weather && <WeatherChart data={weather} />}

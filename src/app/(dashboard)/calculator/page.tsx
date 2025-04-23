@@ -118,7 +118,7 @@ export default function Calculator() {
             </label>
             <div className="flex flex-row gap-4">
               <input
-                className="flex-1 h-12 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-1 h-12 text-gray-900 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 type="number"
                 id="amount"
                 value={needAmount}

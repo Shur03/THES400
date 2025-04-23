@@ -9,12 +9,15 @@ import {
   Polyline,
   Circle,
 } from "react-leaflet";
-
 import "leaflet/dist/leaflet.css";
 import Header from "@/components/header/Header";
 import { useSession } from "next-auth/react";
 import L from "leaflet";
 import { useRouter } from "next/navigation";
+// import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardHeader, CardTitle } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
+import { InfoIcon, MapPinIcon, NavigationIcon } from "lucide-react";
 
 const customIcon = new L.Icon({
   iconUrl: "/img/custom-marker.png",
@@ -38,6 +41,7 @@ type ApiResponse = {
   distances: {
     A_to_B: string;
     A_to_C: string;
+    distance: string;
   };
   radius: string;
   result: string;
@@ -48,8 +52,11 @@ export default function CoordinateRangeChecker() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [customPoint, setCustomPoint] = useState<Point | null>(null);
+  const [mapInitialized, setMapInitialized] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  const pageName = "Газар зүйн байршил хянах";
 
   const fetchData = async (pointC?: Point) => {
     try {
@@ -79,21 +86,78 @@ export default function CoordinateRangeChecker() {
 
   const handleMapClick = (e: L.LeafletMouseEvent) => {
     const newPoint: Point = {
-      name: "Custom",
+      name: "Custom Point",
       latitude: e.latlng.lat,
       longitude: e.latlng.lng,
     };
     setCustomPoint(newPoint);
     fetchData(newPoint);
   };
+
+  const handleRecenter = () => {
+    if (data && mapInitialized) {
+      const center = [
+        data.coordinates.A.latitude,
+        data.coordinates.A.longitude,
+      ] as [number, number];
+    }
+  };
+
   if (!session) {
     router.push("login");
-    return <p className="text-gray-900">Нэвтэрнэ үү.</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Authentication Required</CardTitle>
+          </CardHeader>
+          <div>
+            <p className="text-gray-700">Please login to access this page.</p>
+            <Button
+              className="mt-4 w-full"
+              onClick={() => router.push("login")}
+            >
+              Go to Login
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
   }
-  if (loading && !data)
-    return <div className="text-center py-8">Loading...</div>;
-  if (error)
-    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+
+  if (loading && !data) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Header pageName={pageName} username={session.user?.name || "Guest"} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Header pageName={pageName} username={session.user?.name || "Guest"} />
+        <Card className="mt-6 border-red-200">
+          <CardHeader className="bg-red-50">
+            <CardTitle className="text-red-600 flex items-center gap-2">
+              <InfoIcon className="w-5 h-5" />
+              Алдаа гарлаа
+            </CardTitle>
+          </CardHeader>
+          <div className="pt-4">
+            <p className="text-red-700">{error}</p>
+            <Button
+              className="mt-4"
+              variant="outline"
+              onClick={() => window.location.reload()}
+            >
+              Дахин оролдохЫ
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   const points = data
     ? [
@@ -113,18 +177,17 @@ export default function CoordinateRangeChecker() {
     : 0;
 
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-800">
-      <Header username={session.user?.name || "Guest"} />
-      <h1 className="text-2xl font-bold mb-6">Газар зүйн байршил хянах</h1>
-
+    <div className="container mx-auto px-4 py-8">
+      <Header pageName={pageName} username={session.user?.name || "Guest"} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="h-96 w-full relative">
+        <div className="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+          <div className="h-[500px] w-full relative">
             <MapContainer
               center={center as [number, number]}
               zoom={8}
               style={{ height: "100%", width: "100%" }}
               whenCreated={(map) => {
+                setMapInitialized(true);
                 map.on("click", handleMapClick);
               }}
             >
@@ -132,27 +195,27 @@ export default function CoordinateRangeChecker() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              {/* <MapPin /> */}
 
               {points.map((point, index) => (
                 <Marker
                   key={`${point.name}-${index}`}
                   position={[point.latitude, point.longitude]}
-                  icon={customIcon} // or use a hidden icon
+                  icon={customIcon}
                 >
-                  <Popup>
-                    <div>
-                      <strong>{point.name}</strong>
-                      <br />
-                      Өргөрөг: {point.latitude.toFixed(6)}
-                      <br />
-                      Уртраг: {point.longitude.toFixed(6)}
+                  <Popup className="text-sm">
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-gray-900">{point.name}</h4>
+                      <p className="text-gray-700">
+                        Өргөрөг: {point.latitude.toFixed(6)}
+                      </p>
+                      <p className="text-gray-700">
+                        Уртраг: {point.longitude.toFixed(6)}
+                      </p>
                     </div>
                   </Popup>
                 </Marker>
               ))}
 
-              {/* Draw radius circle */}
               {data && (
                 <Circle
                   center={[
@@ -163,17 +226,6 @@ export default function CoordinateRangeChecker() {
                   pathOptions={{ color: "green", fillOpacity: 0.2 }}
                 />
               )}
-
-              {/* Lines from A to B and A to C */}
-              {/* {points.length >= 2 && (
-                <Polyline
-                  positions={points
-                    .slice(0, 2)
-                    .map((p) => [p.latitude, p.longitude])
-                  }
-                  color="black"
-                />
-              )} */}
 
               {points.length === 3 && (
                 <Polyline
@@ -186,54 +238,111 @@ export default function CoordinateRangeChecker() {
                 />
               )}
             </MapContainer>
+            <div className="absolute bottom-4 left-4 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200 z-[1000]">
+              <p className="text-sm text-gray-600 flex items-center">
+                <MapPinIcon className="w-4 h-4 mr-2" />
+                Байршилаа тодорхойлох
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          {data && (
-            <>
-              <h2 className="text-xl font-semibold mb-4">Үр дүн</h2>
-
+        <div className="space-y-6 text-gray-900">
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Үр дүн</CardTitle>
+            </CardHeader>
+            <div>
               <div
-                className={`p-4 mb-4 rounded-lg ${
-                  data.result === "Бүсээс гарсан"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-green-100 text-green-800"
+                className={`p-4 rounded-lg ${
+                  data?.result === "Бүсээс гарсан"
+                    ? "bg-red-50 border border-red-100"
+                    : "bg-green-50 border border-green-100"
                 }`}
               >
-                <p className="font-bold">Төлөв: {data.result}</p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Зай</h3>
-                  <ul className="space-y-2">
-                    <li>Бүс: {data.distances.A_to_B} км</li>
-                    <li className="text-red-400">
-                      Бүсээс гадагш: {data.distances.A_to_C}
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-medium mb-2">Координат</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {Object.entries(data.coordinates).map(([key, point]) => (
-                      <div key={key} className="bg-gray-50 p-3 rounded">
-                        <p className="font-semibold">{point.name}</p>
-                        <p className="text-sm">
-                          Өргөрөг: {point.latitude.toFixed(6)}
-                        </p>
-                        <p className="text-sm">
-                          Уртраг: {point.longitude.toFixed(6)}
-                        </p>
-                      </div>
-                    ))}
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`p-2 rounded-full ${
+                      data?.result === "Бүсээс гарсан"
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
+                    }`}
+                  >
+                    <InfoIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Төлөв</h3>
+                    <p
+                      className={`${
+                        data?.result === "Бүсээс гарсан"
+                          ? "text-red-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {data?.result}
+                    </p>
                   </div>
                 </div>
               </div>
-            </>
-          )}
+            </div>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Зайны мэдээлэл</CardTitle>
+            </CardHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Бүс:</span>
+                  <span className="font-medium">
+                    {data?.distances.A_to_B} км
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Бүсээс гадагш:</span>
+                  <span className="font-medium text-red-600">
+                    {data?.distances.distance} км
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Координатууд</CardTitle>
+            </CardHeader>
+            <div>
+              <div className="space-y-4">
+                {data &&
+                  Object.entries(data.coordinates).map(([key, point]) => (
+                    <div
+                      key={key}
+                      className="bg-gray-50 p-4 rounded-md border border-gray-100"
+                    >
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        {point.name}
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-gray-500">Өргөрөг:</p>
+                          <p className="font-mono">
+                            {point.latitude.toFixed(6)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Уртраг:</p>
+                          <p className="font-mono">
+                            {point.longitude.toFixed(6)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

@@ -9,10 +9,11 @@ import Footer from "@/components/footer/Footer";
 import { Button } from "react-bootstrap";
 import AddButton from "@/components/shared/buttons/addButton";
 import FodderList from "@/components/page/Fodder/FodderList";
+import FodderChart from "@/components/charts/FodderChart";
 
 export default function Page() {
   const router = useRouter();
-
+  const pageName = "Өвс тэжээллийн худалдан авалт";
   const { data: session } = useSession();
   if (!session) {
     return (
@@ -25,9 +26,9 @@ export default function Page() {
   }
   return (
     <div className="mx-5 rounded-lg p-4">
-      <Header username={session.user?.name ?? ""} />
+      <Header pageName={pageName} username={session.user?.name ?? ""} />
       <div className="flex flex-row justify-between items-center mb-4">
-        <FodderList />
+        <FodderChart />
         <AddButton path="fodder/purchase" />
       </div>
       <PurchaseList />

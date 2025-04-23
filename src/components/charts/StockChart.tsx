@@ -1,5 +1,4 @@
 "use client";
-
 import { Line } from "react-chartjs-2";
 import React from "react";
 import {
@@ -23,67 +22,98 @@ Chart.register(
   Filler
 );
 
-export default function StockChart() {
+interface StockChartProps {
+  trend?: "up" | "down" | "neutral";
+}
+
+export default function StockChart({ trend = "neutral" }: StockChartProps) {
+  // Generate different data based on trend
+  const generateData = () => {
+    const base = Math.floor(Math.random() * 20) + 5;
+    if (trend === "up") {
+      return Array(7)
+        .fill(0)
+        .map((_, i) => base + i * (Math.random() * 3 + 1));
+    } else if (trend === "down") {
+      return Array(7)
+        .fill(0)
+        .map((_, i) => base - i * (Math.random() * 3 + 1));
+    }
+    return Array(7)
+      .fill(0)
+      .map(() => base + (Math.random() * 10 - 5));
+  };
+
+  const lineColor =
+    trend === "up"
+      ? "rgba(16, 185, 129, 0.8)"
+      : trend === "down"
+      ? "rgba(239, 68, 68, 0.8)"
+      : "rgba(156, 163, 175, 0.8)";
+
   return (
     <Line
       options={{
+        responsive: true,
         plugins: {
           legend: {
             display: false,
+          },
+          tooltip: {
+            enabled: false,
           },
         },
         maintainAspectRatio: false,
         scales: {
           x: {
-            grid: {
-              display: false,
-            },
-            ticks: {
-              display: false,
-            },
-            border: {
-              display: true,
-            },
-          },
-          y: {
-            min: -9,
-            max: 39,
             display: false,
             grid: {
               display: false,
             },
-            ticks: {
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            display: false,
+            grid: {
               display: false,
             },
           },
         },
         elements: {
           line: {
-            borderWidth: 1,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: {
+              target: "origin",
+              above:
+                trend === "up"
+                  ? "rgba(16, 185, 129, 0.05)"
+                  : trend === "down"
+                  ? "rgba(239, 68, 68, 0.05)"
+                  : "rgba(156, 163, 175, 0.05)",
+            },
           },
           point: {
-            radius: 4,
-            hitRadius: 10,
-            hoverRadius: 4,
+            radius: 0,
+            hoverRadius: 0,
           },
+        },
+        interaction: {
+          intersect: false,
+          mode: "index",
         },
       }}
       data={{
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         datasets: [
           {
-            label: "My First dataset",
+            label: "Trend",
             backgroundColor: "transparent",
-            borderColor: "rgba(255,255,255,.55)",
-            data: [1, 18, 9, 17, 34, 22, 11],
+            borderColor: lineColor,
+            borderCapStyle: "round",
+            data: generateData(),
           },
         ],
       }}

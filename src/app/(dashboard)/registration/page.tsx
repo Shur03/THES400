@@ -12,6 +12,7 @@ import { Button } from "react-bootstrap";
 
 export default function Page() {
   const router = useRouter();
+  const pageName = "Өсөлт хорогдлын бүртгэл";
   const [formData, setFormData] = useState({
     stock_type: "",
     counts: "",
@@ -27,7 +28,7 @@ export default function Page() {
   }
   return (
     <div>
-      <Header username={session.user?.name || "Guest"} />
+      <Header pageName={pageName} username={session.user?.name || "Guest"} />
       <div className="h-4">
         {/** Өсөлт хорогдлыг графикаар харуулах */}
         <EventChart />

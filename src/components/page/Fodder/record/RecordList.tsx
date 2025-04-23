@@ -95,12 +95,6 @@ export default function RecordList() {
   return (
     <div className="bg-white text-gray-900 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Зарцуулалтын бүртгэл
-          </h2>
-        </div>
-
         <div className="overflow-x-auto">
           <Table className="min-w-full">
             <thead className="bg-gray-50">

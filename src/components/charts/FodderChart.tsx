@@ -1,5 +1,4 @@
 "use client";
-
 import { Line } from "react-chartjs-2";
 import React from "react";
 import {
@@ -11,6 +10,7 @@ import {
   LineElement,
   PointElement,
   Tooltip,
+  Legend,
 } from "chart.js";
 
 Chart.register(
@@ -20,73 +20,158 @@ Chart.register(
   LineElement,
   BarElement,
   Tooltip,
-  Filler
+  Filler,
+  Legend
 );
 
-export default function FodderChart() {
+interface FodderChartProps {
+  height?: string;
+  firstDatasetLabel?: string;
+  secondDatasetLabel?: string;
+  firstDatasetData?: number[];
+  secondDatasetData?: number[];
+}
+
+export default function FodderChart({
+  height = "120px",
+  firstDatasetLabel = "Өвс",
+  secondDatasetLabel = "Тэжээл",
+  firstDatasetData,
+  secondDatasetData,
+}: FodderChartProps) {
+  // Generate data if not provided
+  const generateData = (base: number, variation: number) => {
+    return Array(7)
+      .fill(0)
+      .map(
+        (_, i) =>
+          Math.round(
+            Math.max(
+              5,
+              base + (Math.random() * variation * 2 - variation) + i * 0.5
+            ) * 10
+          ) / 10
+      );
+  };
+
+  const supplyData = firstDatasetData || generateData(20, 5);
+  const demandData = secondDatasetData || generateData(15, 7);
+
   return (
-    <Line
-      options={{
-        plugins: {
-          legend: {
-            display: false,
-          },
-        },
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            grid: {
-              display: false,
+    <div style={{ height }}>
+      <Line
+        options={{
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "top",
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 12,
+                },
+              },
             },
-            ticks: {
-              display: false,
+            tooltip: {
+              enabled: true,
+              mode: "index",
+              intersect: false,
+              callbacks: {
+                label: (context) => {
+                  return `${context.dataset.label}: ${context.parsed.y} tons`;
+                },
+              },
+              displayColors: true,
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              titleFont: {
+                size: 12,
+              },
+              bodyFont: {
+                size: 12,
+              },
+              padding: 8,
             },
-            border: {
-              display: true,
+          },
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: {
+                display: false,
+                // drawBorder: false,
+              },
+              ticks: {
+                display: true,
+                color: "#6B7280",
+                font: {
+                  size: 10,
+                },
+              },
+            },
+            y: {
+              min: 0,
+              suggestedMax: Math.max(...supplyData, ...demandData) * 1.2,
+              grid: {
+                display: true,
+                color: "rgba(209, 213, 219, 0.3)",
+                // drawBorder: false,
+              },
+              ticks: {
+                display: true,
+                color: "#6B7280",
+                font: {
+                  size: 10,
+                },
+                callback: (value) => `${value} t`,
+              },
             },
           },
-          y: {
-            min: -9,
-            max: 39,
-            display: false,
-            grid: {
-              display: false,
+          elements: {
+            line: {
+              borderWidth: 2,
+              tension: 0.3,
             },
-            ticks: {
-              display: false,
+            point: {
+              radius: 0,
+              hoverRadius: 5,
+              hoverBorderWidth: 2,
             },
           },
-        },
-        elements: {
-          line: {
-            borderWidth: 1,
+          interaction: {
+            intersect: false,
+            mode: "nearest",
           },
-          point: {
-            radius: 4,
-            hitRadius: 10,
-            hoverRadius: 4,
-          },
-        },
-      }}
-      data={{
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-        ],
-        datasets: [
-          {
-            label: "My First dataset",
-            backgroundColor: "transparent",
-            borderColor: "rgba(255,255,255,.55)",
-            data: [1, 18, 9, 17, 34, 22, 11],
-          },
-        ],
-      }}
-    />
+        }}
+        data={{
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          datasets: [
+            {
+              label: firstDatasetLabel,
+              backgroundColor: "rgba(74, 222, 128, 0.1)",
+              borderColor: "rgba(74, 222, 128, 0.8)",
+              borderCapStyle: "round",
+              borderJoinStyle: "round",
+              data: supplyData,
+              fill: {
+                target: "origin",
+                above: "rgba(74, 222, 128, 0.05)",
+              },
+            },
+            {
+              label: secondDatasetLabel,
+              backgroundColor: "rgba(248, 113, 113, 0.1)",
+              borderColor: "rgba(248, 113, 113, 0.8)",
+              borderCapStyle: "round",
+              borderJoinStyle: "round",
+              data: demandData,
+              fill: {
+                target: "origin",
+                above: "rgba(248, 113, 113, 0.05)",
+              },
+            },
+          ],
+        }}
+      />
+    </div>
   );
 }
