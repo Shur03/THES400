@@ -6,15 +6,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 
-interface SireFormProps {
-  mode?: "create" | "edit";
-  sireId?: string;
-}
 const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
   id: parseInt(id),
   name,
 }));
-export default function SireForm({ mode = "create", sireId }: SireFormProps) {
+export default function SireForm() {
   const [formData, setFormData] = useState({
     stock_id: 0,
     name: "",
@@ -22,9 +18,7 @@ export default function SireForm({ mode = "create", sireId }: SireFormProps) {
     weight: "",
     type: "",
   });
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(mode === "edit");
+  const [loadingTypes, setLoadingTypes] = useState(true);
   const [state, setState] = useState<{
     message: string;
     success: boolean;
@@ -42,36 +36,11 @@ export default function SireForm({ mode = "create", sireId }: SireFormProps) {
       [name]: name === "stock_id" ? parseInt(value) || 0 : value,
     }));
   };
-  useEffect(() => {
-    if (mode === "edit" && sireId) {
-      const fetchSire = async () => {
-        try {
-          const response = await fetch(`/api/sires/${sireId}`);
-          if (!response.ok) throw new Error("Failed to fetch sire");
-          const data = await response.json();
-          setFormData({
-            stock_id: data.stock_id,
-            name: data.name,
-            breed: data.breed || "",
-            weight: data.weight,
-            type: data.type,
-            //  freq_date: data.freq_date ? data.freq_date.split("T")[0] : "",
-          });
-        } catch (error) {
-          console.error("Error fetching sire:", error);
-          setState({
-            message: "Алдаа гарлаа. Дахин оролдоно уу.",
-            success: false,
-          });
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchSire();
-    }
-  }, [mode, sireId]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // Clear previous messages
     setState({ message: "", success: false, errors: undefined });
     if (formData.stock_id <= 0) {
       setState({
@@ -87,33 +56,28 @@ export default function SireForm({ mode = "create", sireId }: SireFormProps) {
     setIsSubmitting(true);
 
     try {
-      const url = mode === "edit" ? `/api/sires/${sireId}` : "/api/sires";
+      const result = await create(formData);
 
-      const method = mode === "edit" ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-
-      if (response.ok) {
+      if (result.success) {
         setState({
-          message:
-            mode === "edit"
-              ? "Бүртгэл амжилттай шинэчлэгдлээ!"
-              : "Бүртгэл амжилттай хадгалагдлаа!",
+          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
           success: true,
         });
-        router.push("/sire");
-      } else {
-        setState({
-          message: result.error || "Алдаа гарлаа, дахин оролдоно уу.",
-          success: false,
-          errors: result.errors,
+        setFormData({
+          stock_id: 0,
+          name: "",
+          breed: "",
+          weight: "",
+          type: "",
         });
       }
+      // } else {
+      //   setState({
+      //     message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
+      //     success: false,
+      //     errors: result.errors,
+      //   });
+      // }
     } catch (error) {
       setState({
         message: "Алдаа гарлаа, дахин оролдоно уу",
