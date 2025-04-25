@@ -31,7 +31,7 @@ export default function Page() {
       <Header pageName={pageName} username={session.user?.name || "Guest"} />
       <div className="h-4">
         {/** Өсөлт хорогдлыг графикаар харуулах */}
-        <EventChart />
+        {/* <EventChart /> */}
         <AddButton path="registration" />
         <EventList />
         <Footer />

@@ -20,7 +20,6 @@ const stockLabels: Record<string, string> = {
   horsePrice: "Адуу",
   cattlePrice: "Үхэр",
   camelPrice: "Тэмээ",
-  yakPrice: "Сарлаг",
 };
 
 export default function Calculator() {

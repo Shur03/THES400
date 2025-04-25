@@ -1,20 +1,15 @@
 "use client";
 
-import { TreeDeciduous } from "lucide-react";
+import FodderTypeMap from "@/models/FodderTypeMap";
+import { Package, Sprout, TreeDeciduous } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Badge, Spinner } from "react-bootstrap"; // Optional: or replace with your own loader
 
 type Fodder = {
   id: number;
-  type: string;
+  types: string;
   quantity: number;
 };
-
-// type FodderRecord = {
-//   id: number;
-//   quantity_used: number;
-//   used_date: string;
-//   fodder: Fodder;
-// };
 
 export default function FodderList() {
   const [records, setRecords] = useState<Fodder[]>([]);
@@ -39,24 +34,46 @@ export default function FodderList() {
   return (
     <div className="p-6">
       {loading ? (
-        <p>Loading...</p>
+        <div className="flex justify-center py-8">
+          <Spinner animation="border" variant="success" />
+        </div>
       ) : records.length === 0 ? (
-        <p>No records found.</p>
+        <div className="text-center text-gray-600 py-12">
+          <p className="text-lg font-medium">Бүртгэл олдсонгүй</p>
+        </div>
       ) : (
-        <div className="overflow-x-auto grid grid-cols-2 gap-4">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {records.map((record) => (
-            <div className="bg-white w-full  rounded-lg shadow p-6 mb-6">
+            <div
+              key={record.id}
+              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 p-5"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500">
-                    {record.type}
+                    <Badge
+                      bg="info"
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        record.types === "uvs"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {FodderTypeMap[record.types] ?? record.types}
+                    </Badge>
                   </p>
-                  <p className="text-3xl font-semibold text-gray-800">
+                  <p className="text-3xl font-bold text-gray-800 mt-1">
                     {record.quantity}
                   </p>
+                  ` `
                 </div>
-                <div className="bg-gray-100 p-3 rounded-full">
-                  <TreeDeciduous className=" text-green-300" />
+                <div className="bg-green-50 p-3 rounded-full self-end">
+                  $
+                  {record.types === "uvs" ? (
+                    <Sprout className="text-green-500 h-4 w-4" />
+                  ) : (
+                    <Package className="text-green-500 h-4 w-4" />
+                  )}
                 </div>
               </div>
             </div>
