@@ -2,14 +2,15 @@ import { cn } from "@/app/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Calculator,
+  ChartLine,
   ChevronDown,
   ChevronUp,
-  ClipboardPlus,
+  Dna,
   HomeIcon,
   MapPin,
   Menu,
+  Sprout,
   Syringe,
-  TreeDeciduous,
   X,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,17 +18,17 @@ import { useState } from "react";
 
 const links = [
   { name: "Нүүр", href: "/dashboard", icon: HomeIcon },
-  { name: "Өсөлт хорогдол", href: "/registration", icon: ClipboardPlus },
+  { name: "Өсөлт хорогдол", href: "/registration", icon: ChartLine },
   {
     name: "Өвс тэжээл",
-    icon: TreeDeciduous,
+    icon: Sprout,
     children: [
       { name: "Худалдан авалт", href: "/fodder/purchase" },
       { name: "Зарцуулалт", href: "/fodder/record" },
     ],
   },
   { name: "Вакцинжуулалт", href: "/treatment", icon: Syringe },
-  { name: "Sire", href: "/sire", icon: Syringe },
+  { name: "Сүргийн тэргүүн", href: "/sire", icon: Dna },
   { name: "Тооцоолуур", href: "/calculator", icon: Calculator },
   { name: "Байршил", href: "/geo", icon: MapPin },
 ];

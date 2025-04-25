@@ -1,6 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
+import { auth } from "../../../../../lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -11,6 +12,10 @@ export async function create(formData: {
   freq_date: string;
 }) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Нэвтрэх шаардлагатай." };
+    }
     const treatment = prisma.medicalRecord.create({
       data: {
         stock_id: formData.stock_id,

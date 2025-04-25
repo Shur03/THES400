@@ -16,9 +16,7 @@ export default function Page() {
   if (!session) {
     return (
       <div>
-        <button className="bg-blue-400 text-gray-900" onClick={() => signIn()}>
-          Нэвтрэх
-        </button>
+        <h2 className="bg-blue-400 text-gray-900">Түр хүлээнэ үү</h2>
       </div>
     );
   }

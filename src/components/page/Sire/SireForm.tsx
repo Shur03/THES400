@@ -15,6 +15,8 @@ export default function SireForm() {
     stock_id: 0,
     name: "",
     breed: "",
+    age: 0,
+    year: "",
     weight: "",
     type: "",
   });
@@ -25,6 +27,7 @@ export default function SireForm() {
     errors?: Record<string, string[]>;
   }>({ message: "", success: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -56,20 +59,27 @@ export default function SireForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await create(formData);
+      const result = await create({
+        ...formData,
+        year: new Date(formData.year),
+        weight: parseFloat(formData.weight),
+      });
 
       if (result.success) {
         setState({
-          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
+          message: "Бүртгэл амжилттай хадгалагдлаа!",
           success: true,
         });
         setFormData({
           stock_id: 0,
           name: "",
+          year: "",
+          age: 0,
           breed: "",
           weight: "",
           type: "",
         });
+        router.push("/sire");
       }
       // } else {
       //   setState({
@@ -172,7 +182,19 @@ export default function SireForm() {
             rows={3}
           />
         </div>
-
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="age">
+            Нас
+          </label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="weight">
             Жин
@@ -185,6 +207,28 @@ export default function SireForm() {
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md"
           />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="year">
+            Он
+          </label>
+          <select
+            id="year"
+            name="year"
+            value={formData.year}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="">Жил сонгоно уу</option>
+            {Array.from({ length: 5 }, (_, i) => {
+              const year = new Date().getFullYear() - i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
         </div>
 
         <div className="flex gap-3 mt-6">

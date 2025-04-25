@@ -9,6 +9,8 @@ export async function create(formData: {
   stock_id: number;
   name: string;
   breed: string;
+  age: number;
+  year: Date;
   weight: number;
 }) {
   try {
@@ -23,6 +25,8 @@ export async function create(formData: {
         name: formData.name,
         breed: formData.breed,
         weight: formData.weight,
+        age: formData.age,
+        year: formData.year.getFullYear(),
       },
     });
 

@@ -1,6 +1,9 @@
+"use client";
+
 import { create } from "@/app/(dashboard)/treatment/create/action";
 import BackButton from "@/components/shared/buttons/backButton";
-import { useSession } from "next-auth/react";
+import StockType from "@/models/StockType";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Alert } from "react-bootstrap";
 
@@ -11,14 +14,11 @@ export default function TreatmentForm() {
     descrip: "",
     freq_date: "",
   });
-  const STOCK_TYPES = [
-    { id: 1, name: "Хонь" },
-    { id: 2, name: "Ямаа" },
-    { id: 3, name: "Үхэр" },
-    { id: 4, name: "Адуу" },
-    { id: 5, name: "Тэмээ" },
-  ];
-
+  const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+    id: parseInt(id),
+    name,
+  }));
+  const router = useRouter();
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [state, setState] = useState<{
     message: string;
@@ -61,7 +61,7 @@ export default function TreatmentForm() {
 
       if (result.success) {
         setState({
-          message: "Өсөлт хорогдлын бүртгэл амжилттай хадгалагдлаа!",
+          message: "Бүртгэл амжилттай хадгалагдлаа!",
           success: true,
         });
         setFormData({
@@ -70,6 +70,7 @@ export default function TreatmentForm() {
           descrip: "",
           freq_date: "",
         });
+        router.push("/treatment");
       }
       // } else {
       //   setState({

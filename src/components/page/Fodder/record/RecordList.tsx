@@ -13,7 +13,7 @@ type Records = {
   used_date: "";
   fodder?: {
     id: number;
-    type?: string;
+    types?: string;
   };
 };
 
@@ -127,13 +127,17 @@ export default function RecordList() {
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                    {record.fodder?.type && (
+                    {record.fodder?.types && (
                       <Badge
                         bg="info"
-                        className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800"
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          record.fodder.types === "uvs"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
                       >
-                        {FodderTypeMap[record.fodder.type] ??
-                          record.fodder.type}
+                        {FodderTypeMap[record.fodder.types] ??
+                          record.fodder.types}
                       </Badge>
                     )}
                   </td>

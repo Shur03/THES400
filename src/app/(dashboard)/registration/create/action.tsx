@@ -16,6 +16,7 @@ export async function create(formData: {
   errors?: Record<string, string[]>;
 }> {
   try {
+    // Input validations
     if (formData.stock_id <= 0) {
       return {
         success: false,
@@ -37,13 +38,48 @@ export async function create(formData: {
       };
     }
 
-    const event = await prisma.eventRecord.create({
+    // Get current stock info
+    const currentStock = await prisma.liveStock.findUnique({
+      where: { id: formData.stock_id },
+    });
+
+    if (!currentStock) {
+      return {
+        success: false,
+        message: "Сонгосон малын бүртгэл олдсонгүй",
+      };
+    }
+
+    // Calculate the adjustment
+    const adjustment =
+      formData.type === "inc" ? formData.count : -formData.count;
+
+    const newCount = currentStock.counts + adjustment;
+
+    // Prevent negative stock count
+    if (newCount < 0) {
+      return {
+        success: false,
+        errors: { count: ["Малын тоо хасах үед 0-ээс бага байж болохгүй"] },
+      };
+    }
+
+    // Create the event record
+    await prisma.eventRecord.create({
       data: {
         stock_id: formData.stock_id,
         event_type: formData.type as EventType,
         counts: formData.count,
         descrip: formData.descrip,
         event_date: formData.event_date ? new Date(formData.event_date) : null,
+      },
+    });
+
+    // Update the stock count
+    await prisma.liveStock.update({
+      where: { id: formData.stock_id },
+      data: {
+        counts: newCount,
       },
     });
 

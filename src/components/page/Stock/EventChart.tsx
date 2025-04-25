@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import {
@@ -49,71 +47,109 @@ type ChartData = {
   }[];
 };
 
+type AnimalType = "sheep" | "goat" | "cow" | "horse" | "camel";
+
 export default function EventChart() {
   const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [chartType, setChartType] = useState<"bar" | "line">("bar");
+  const [chartType, setChartType] = useState<"bar" | "line">("line");
   const [timeRange, setTimeRange] = useState<"week" | "month" | "year">(
     "month"
   );
   const [loading, setLoading] = useState(true);
-  const [selectedStock, setSelectedStock] = useState<string>("all");
+  const [selectedStock, setSelectedStock] = useState<AnimalType | "all">("all");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/livestock/trends");
+        setLoading(true);
+        let url = "/api/event/trend";
+        if (selectedStock !== "all") {
+          url += `?type=${selectedStock}`;
+        }
+
+        const response = await fetch(url);
         const data: StockData[] = await response.json();
 
-        // Filter data by selected stock type if not "all"
-        const filteredData =
-          selectedStock === "all"
-            ? data
-            : data.filter((item) => item.stock_type === selectedStock);
-
-        // Group data by date and calculate net change
+        // Process data to get cumulative counts by date
         const dateMap = new Map<string, number>();
+        let cumulativeCount = 0;
 
-        filteredData.forEach((item) => {
-          const change = item.event_type === "inc" ? item.counts : -item.counts;
-          const current = dateMap.get(item.date) || 0;
-          dateMap.set(item.date, current + change);
-        });
-
-        // Sort dates chronologically
-        const sortedDates = Array.from(dateMap.keys()).sort(
-          (a, b) => new Date(a).getTime() - new Date(b).getTime()
+        // Sort by date ascending
+        const sortedData = [...data].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
-        // Calculate cumulative counts
-        let cumulativeCount = 0;
-        const cumulativeData = sortedDates.map((date) => {
-          cumulativeCount += dateMap.get(date) || 0;
-          return cumulativeCount;
+        const labels: string[] = [];
+        const counts: number[] = [];
+
+        sortedData.forEach((item) => {
+          const change = item.event_type === "inc" ? item.counts : -item.counts;
+          cumulativeCount += change;
+
+          // Format date based on time range
+          const date = new Date(item.date);
+          let formattedDate = date.toLocaleDateString("mn-MN", {
+            day: "numeric",
+            month: "short",
+          });
+
+          if (timeRange === "year") {
+            formattedDate = date.toLocaleDateString("mn-MN", {
+              month: "short",
+              year: "numeric",
+            });
+          } else if (timeRange === "week") {
+            formattedDate = date.toLocaleDateString("mn-MN", {
+              weekday: "short",
+              day: "numeric",
+            });
+          }
+
+          labels.push(formattedDate);
+          counts.push(cumulativeCount);
         });
 
         const colors = {
-          bar: {
-            inc: "rgba(75, 192, 192, 0.6)",
-            dec: "rgba(255, 99, 132, 0.6)",
-            net: "rgba(54, 162, 235, 0.6)",
+          all: {
+            bg: "rgba(54, 162, 235, 0.6)",
+            border: "rgba(54, 162, 235, 1)",
           },
-          line: {
-            trend: "rgba(153, 102, 255, 0.6)",
+          sheep: {
+            bg: "rgba(75, 192, 192, 0.6)",
+            border: "rgba(75, 192, 192, 1)",
+          },
+          goat: {
+            bg: "rgba(255, 159, 64, 0.6)",
+            border: "rgba(255, 159, 64, 1)",
+          },
+          cow: {
+            bg: "rgba(153, 102, 255, 0.6)",
+            border: "rgba(153, 102, 255, 1)",
+          },
+          horse: {
+            bg: "rgba(255, 99, 132, 0.6)",
+            border: "rgba(255, 99, 132, 1)",
+          },
+          camel: {
+            bg: "rgba(255, 206, 86, 0.6)",
+            border: "rgba(255, 206, 86, 1)",
           },
         };
 
+        const selectedColor =
+          selectedStock === "all" ? colors.all : colors[selectedStock];
+
         setChartData({
-          labels: sortedDates,
+          labels,
           datasets: [
             {
-              label: chartType === "bar" ? "Нийт өөрчлөлт" : "Хувьсал",
-              data: cumulativeData,
-              backgroundColor:
-                chartType === "bar" ? colors.bar.net : colors.line.trend,
-              borderColor:
-                chartType === "bar"
-                  ? colors.bar.net.replace("0.6", "1")
-                  : colors.line.trend.replace("0.6", "1"),
+              label:
+                selectedStock === "all"
+                  ? "Нийт малын тоо"
+                  : `${getAnimalName(selectedStock)}-н тоо`,
+              data: counts,
+              backgroundColor: selectedColor.bg,
+              borderColor: selectedColor.border,
               borderWidth: 2,
               tension: chartType === "line" ? 0.4 : undefined,
             },
@@ -129,10 +165,35 @@ export default function EventChart() {
     fetchData();
   }, [chartType, timeRange, selectedStock]);
 
+  const getAnimalName = (type: AnimalType | "all"): string => {
+    switch (type) {
+      case "sheep":
+        return "Хонь";
+      case "goat":
+        return "Ямаа";
+      case "cow":
+        return "Үхэр";
+      case "horse":
+        return "Адуу";
+      case "camel":
+        return "Тэмээ";
+      default:
+        return "Бүх төрөл";
+    }
+  };
+
   if (loading)
-    return <div className="text-center py-8">Өгөгдөл ачаалж байна...</div>;
+    return (
+      <div className="text-center text-green-300 py-8">
+        Өгөгдөл ачаалж байна...
+      </div>
+    );
   if (!chartData)
-    return <div className="text-center py-8">Өгөгдөл олдсонгүй</div>;
+    return (
+      <div className="text-center text-green-300 py-8">
+        График харуулахад алдаа гарлаа
+      </div>
+    );
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -144,7 +205,9 @@ export default function EventChart() {
         <div className="flex flex-wrap gap-3">
           <select
             value={selectedStock}
-            onChange={(e) => setSelectedStock(e.target.value)}
+            onChange={(e) =>
+              setSelectedStock(e.target.value as AnimalType | "all")
+            }
             className="px-3 py-2 border rounded-md bg-white text-sm"
           >
             <option value="all">Бүх төрөл</option>
@@ -159,7 +222,7 @@ export default function EventChart() {
             {["week", "month", "year"].map((range) => (
               <button
                 key={range}
-                onClick={() => setTimeRange(range as any)}
+                onClick={() => setTimeRange(range as "week" | "month" | "year")}
                 className={`px-3 py-1 text-sm rounded ${
                   timeRange === range
                     ? "bg-blue-500 text-white"
@@ -278,20 +341,6 @@ export default function EventChart() {
                   },
                 },
                 x: {
-                  type: "time",
-                  time: {
-                    unit:
-                      timeRange === "week"
-                        ? "day"
-                        : timeRange === "month"
-                        ? "week"
-                        : "month",
-                    displayFormats: {
-                      day: "MMM d",
-                      week: "MMM d",
-                      month: "MMM yyyy",
-                    },
-                  },
                   title: {
                     display: true,
                     text: "Огноо",
@@ -312,14 +361,6 @@ export default function EventChart() {
                       const value = context.raw as number;
                       return `${label}: ${value} толгой`;
                     },
-                    title: (items) => {
-                      const date = new Date(items[0].label);
-                      return date.toLocaleDateString("mn-MN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      });
-                    },
                   },
                 },
                 legend: {
@@ -336,10 +377,6 @@ export default function EventChart() {
             }}
           />
         )}
-      </div>
-
-      <div className="mt-4 text-sm text-gray-600">
-        <p>Сүүлийн шинэчлэлт: {new Date().toLocaleDateString("mn-MN")}</p>
       </div>
     </div>
   );

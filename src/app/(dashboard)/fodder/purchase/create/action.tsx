@@ -18,11 +18,30 @@ export async function create(formData: {
       return { success: false, error: "Нэвтрэх шаардлагатай." };
     }
 
-    // Determine initial quantity based on type
-    const initialQuantity =
-      formData.type === "tejeel" ? formData.weight || 0 : formData.counts || 0;
+    // Helper function to determine initial quantity based on fodder type
+    function getInitialQuantity(
+      type: string,
+      weight?: number,
+      counts?: number
+    ): number {
+      switch (type) {
+        case "tejeel":
+          return weight || 0;
+        case "uvs":
+          return counts || 0;
+        default:
+          // You can define additional logic here for other types if needed
+          return counts || 0;
+      }
+    }
 
-    // Find or create fodder stock
+    const initialQuantity = getInitialQuantity(
+      formData.type,
+      formData.weight,
+      formData.counts
+    );
+
+    // Find existing fodder stock
     let fodderStock = await prisma.fodderStock.findFirst({
       where: {
         owner_id: Number(session.user.id),
@@ -31,6 +50,7 @@ export async function create(formData: {
     });
 
     if (!fodderStock) {
+      // Create new fodder stock
       fodderStock = await prisma.fodderStock.create({
         data: {
           owner_id: Number(session.user.id),
@@ -39,7 +59,7 @@ export async function create(formData: {
         },
       });
     } else {
-      // Update existing stock
+      // Update existing stock by increasing the quantity
       fodderStock = await prisma.fodderStock.update({
         where: { id: fodderStock.id },
         data: {

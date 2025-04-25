@@ -118,7 +118,7 @@ export default function EventForm() {
           descrip: "",
           event_date: "",
         });
-        // router.push("registration");
+        router.push("registration");
       } else {
         setState({
           message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
@@ -235,7 +235,7 @@ export default function EventForm() {
             className={`w-full px-3 py-2 border rounded-md ${
               state.errors?.count ? "border-red-500" : ""
             }`}
-            min="0"
+            min="1"
           />
 
           {state.errors?.count && (

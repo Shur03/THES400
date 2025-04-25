@@ -15,6 +15,7 @@ export async function create(formData: {
     if (!session?.user?.id) {
       return { success: false, error: "Нэвтрэх шаардлагатай." };
     }
+
     const fodderStock = await prisma.fodderStock.findFirst({
       where: {
         owner_id: Number(session.user.id),
@@ -26,11 +27,13 @@ export async function create(formData: {
       return { success: false, error: "Тухайн төрлийн тэжээл олдсонгүй." };
     }
 
-    // 2. hangalttai hemjeetei eseh
-    if (fodderStock.quantity < formData.quantity_used) {
+    const quantityAvailable = fodderStock.quantity;
+    const quantityToUse = formData.quantity_used;
+
+    if (quantityAvailable < quantityToUse) {
       return {
         success: false,
-        error: `Хүрэлцэхгүй байна. Боломжит хэмжээ: ${fodderStock.quantity}`,
+        error: `Хүрэлцэхгүй байна. Боломжит хэмжээ: ${quantityAvailable}`,
       };
     }
 
@@ -38,19 +41,16 @@ export async function create(formData: {
       const fodderRecord = await tx.fodderRecord.create({
         data: {
           fodder_id: fodderStock.id,
-          quantity_used: formData.quantity_used,
-          used_date: formData.used_date
-            ? new Date(formData.used_date)
-            : new Date(),
+          quantity_used: quantityToUse,
+          used_date: formData.used_date ?? new Date(),
         },
       });
 
-      // hereglesen hemjeeg hasah
       await tx.fodderStock.update({
         where: { id: fodderStock.id },
         data: {
           quantity: {
-            decrement: formData.quantity_used,
+            decrement: quantityToUse,
           },
         },
       });

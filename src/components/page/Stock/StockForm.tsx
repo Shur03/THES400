@@ -5,14 +5,12 @@ import { create } from "@/app/(dashboard)/stock/create/action";
 import BackButton from "@/components/shared/buttons/backButton";
 import { Button } from "react-bootstrap";
 import SaveButton from "@/components/shared/buttons/saveButton";
+import StockType from "@/models/StockType";
 
-const STOCK_TYPES = [
-  { id: "sheep", name: "Хонь" },
-  { id: "goat", name: "Ямаа" },
-  { id: "horse", name: "Морь" },
-  { id: "camel", name: "Тэмээ" },
-  { id: "cattle", name: "Үхэр" },
-];
+const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
+  id: parseInt(id),
+  name,
+}));
 
 export default function StockForm() {
   const router = useRouter();
