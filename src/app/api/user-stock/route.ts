@@ -1,13 +1,13 @@
 // app/api/user-livestock/route.ts
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+// import { getServerSession } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
-import { authOptions } from '../../../../lib/auth';
+import { auth, authOptions } from '../../../../lib/auth';
 
 const prisma = new PrismaClient();
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
