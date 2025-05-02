@@ -18,7 +18,7 @@ export default function EditSiretPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params); // ✅ unwrap the Promise with React.use
+  const { id } = use(params);
 
   const [formData, setFormData] = useState({
     stock_id: 0,
