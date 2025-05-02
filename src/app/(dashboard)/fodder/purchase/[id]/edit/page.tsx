@@ -8,17 +8,18 @@ const FODDER_TYPE = Object.entries(FodderTypeMap).map(([type, name]) => ({
   type,
   name,
 }));
-export default function EditPurchase({ params }: { params: { id: string } }) {
+type PageProps<T = {}> = {
+  params: T;
+  searchParams?: Record<string, string | string[] | undefined>;
+};
+
+export default function EditPurchase({ params }: PageProps<{ id: string }>) {
   const [formData, setFormData] = useState({
     type: "",
     weight: "",
     counts: "",
     buy_date: "",
     price: "",
-    // stock: {
-    //   id : "",
-    //   type: "",
-    // },
   });
   const [state, setState] = useState<{
     message: string;
