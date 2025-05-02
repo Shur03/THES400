@@ -3,15 +3,12 @@ import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FodderTypeMap from "@/models/FodderTypeMap";
+import PageProps from "@/components/props/pageprop";
 
 const FODDER_TYPE = Object.entries(FodderTypeMap).map(([type, name]) => ({
   type,
   name,
 }));
-type PageProps<T = {}> = {
-  params: T;
-  searchParams?: Record<string, string | string[] | undefined>;
-};
 
 export default function EditPurchase({ params }: PageProps<{ id: string }>) {
   const [formData, setFormData] = useState({
