@@ -3,14 +3,13 @@ import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FodderType from "@/models/FodderType";
-import PageProps from "@/components/props/pageprop";
 
 const FODDER_TYPE = Object.entries(FodderType).map(([id, name]) => ({
   id: parseInt(id),
   name,
 }));
 
-export default function EditRecord({ params }: PageProps<{ id: string }>) {
+export default function EditRecord({ params }: { params: { id: string } }) {
   const [formData, setFormData] = useState({
     fodder_id: 0,
     type: "",

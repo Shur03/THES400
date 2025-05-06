@@ -1,13 +1,16 @@
 "use client";
 import { create } from "@/app/(dashboard)/sire/create/action";
+import type React from "react";
+
 import BackButton from "@/components/shared/buttons/backButton";
 import StockType from "@/models/StockType";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "react-bootstrap";
+import { LoadingBar } from "@/components/ui/loading-bar";
 
 const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
-  id: parseInt(id),
+  id: Number.parseInt(id),
   name,
 }));
 export default function SireForm() {
@@ -36,7 +39,7 @@ export default function SireForm() {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "stock_id" ? parseInt(value) || 0 : value,
+      [name]: name === "stock_id" ? Number.parseInt(value) || 0 : value,
     }));
   };
 
@@ -62,7 +65,7 @@ export default function SireForm() {
       const result = await create({
         ...formData,
         year: new Date(formData.year),
-        weight: parseFloat(formData.weight),
+        weight: Number.parseFloat(formData.weight),
       });
 
       if (result.success) {
@@ -79,15 +82,12 @@ export default function SireForm() {
           weight: "",
           type: "",
         });
-        router.push("/sire");
+
+        // Show a brief success message before navigation
+        setTimeout(() => {
+          router.push("/sire");
+        }, 500);
       }
-      // } else {
-      //   setState({
-      //     message: result.message || "Алдаа гарлаа, дахин оролдоно уу",
-      //     success: false,
-      //     errors: result.errors,
-      //   });
-      // }
     } catch (error) {
       setState({
         message: "Алдаа гарлаа, дахин оролдоно уу",
@@ -100,6 +100,7 @@ export default function SireForm() {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
+      <LoadingBar />
       <h2 className="text-xl font-semibold mb-4">Малын бүртгэл</h2>
 
       {state.message && (

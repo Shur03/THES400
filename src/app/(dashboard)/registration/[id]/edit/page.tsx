@@ -2,9 +2,7 @@
 import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { count } from "console";
 import StockType from "@/models/StockType";
-import PageProps from "@/components/props/pageprop";
 
 const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
   id: parseInt(id),
@@ -13,7 +11,9 @@ const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
 
 export default function EditRegistration({
   params,
-}: PageProps<{ id: string }>) {
+}: {
+  params: { id: string };
+}) {
   const [formData, setFormData] = useState({
     id: 0,
     stock_id: 0,

@@ -2,7 +2,6 @@
 import { Button, Alert, Spinner } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import PageProps from "@/components/props/pageprop";
 
 const STOCK_TYPES = [
   { id: 1, name: "Хонь" },
@@ -12,7 +11,7 @@ const STOCK_TYPES = [
   { id: 5, name: "Тэмээ" },
 ];
 
-export default function EditTreatment({ params }: PageProps<{ id: string }>) {
+export default function EditTreatment({ params }: { params: { id: string } }) {
   const [formData, setFormData] = useState({
     id: 0,
     stock_id: 0,
