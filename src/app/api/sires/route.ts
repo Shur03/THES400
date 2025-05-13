@@ -46,8 +46,10 @@ export async function GET() {
 
 //POST METHOD
 export async function POST(request: Request) {
+  
   try {
     const data = await request.json();
+    console.log(data);
   // Validate required fields
   if (!data.stock_id ) {
     return NextResponse.json(
@@ -62,6 +64,8 @@ export async function POST(request: Request) {
         name: data.name,
         breed: data.breed,
         weight: data.weight,
+        year : data.year,
+        age: data.age,
       },
     });
 
@@ -83,15 +87,11 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
     const id = Number.parseInt(params.id, 10);
 
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Буруу ID байна." }, { status: 400 });
-    }
-
-    const existingTreatment = await prisma.sire.findUnique({
+    const sire = await prisma.sire.findUnique({
       where: { id },
     });
 
-    if (!existingTreatment) {
+    if (!sire) {
       return NextResponse.json({ error: "Бүртгэл олдсонгүй" }, { status: 404 });
     }
 

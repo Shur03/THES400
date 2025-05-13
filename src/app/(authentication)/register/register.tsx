@@ -4,6 +4,7 @@ import { useRegister } from "@/app/hooks/useRegister";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardBody } from "react-bootstrap";
+import { Link } from "lucide-react";
 
 export default function RegisterPage() {
   const { register, loading, error } = useRegister();
@@ -187,12 +188,13 @@ export default function RegisterPage() {
                   <div className="mt-6 text-center text-sm text-gray-600">
                     <p>
                       Бүртгэлтэй юу?{" "}
-                      <button
-                        onClick={() => router.push("/login")}
+                      <Link
+                        href="/login"
+                        // onClick={() => router.push("/login")}
                         className="font-medium text-blue-600 hover:text-blue-800 hover:underline focus:outline-none"
                       >
                         Нэвтрэх
-                      </button>
+                      </Link>
                     </p>
                   </div>
                 </div>

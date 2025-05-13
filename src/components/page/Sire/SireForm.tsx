@@ -21,7 +21,7 @@ export default function SireForm() {
     age: 0,
     year: "",
     weight: "",
-    type: "",
+    // type: "",
   });
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [state, setState] = useState<{
@@ -76,14 +76,13 @@ export default function SireForm() {
         setFormData({
           stock_id: 0,
           name: "",
-          year: "",
-          age: 0,
           breed: "",
           weight: "",
-          type: "",
+          year: "",
+          age: 0,
+          // type: "",
         });
 
-        // Show a brief success message before navigation
         setTimeout(() => {
           router.push("/sire");
         }, 500);

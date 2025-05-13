@@ -10,10 +10,11 @@ const STOCK_TYPES = Object.entries(StockType).map(([id, name]) => ({
 }));
 
 export default function EditRegistration({
-  params,
+  params: paramsPromise,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const [params, setParams] = useState<{ id: string } | null>(null);
   const [formData, setFormData] = useState({
     id: 0,
     stock_id: 0,
@@ -32,6 +33,17 @@ export default function EditRegistration({
   const router = useRouter();
 
   useEffect(() => {
+    const unwrapParams = async () => {
+      const resolvedParams = await paramsPromise;
+      setParams(resolvedParams);
+    };
+
+    unwrapParams();
+  }, [paramsPromise]);
+
+  useEffect(() => {
+    if (!params) return;
+
     const fetchRegistration = async () => {
       try {
         const response = await fetch(`/api/events/${params.id}`);
@@ -59,7 +71,7 @@ export default function EditRegistration({
     };
 
     fetchRegistration();
-  }, [params.id]);
+  }, [params]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -78,7 +90,7 @@ export default function EditRegistration({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/events/${params.id}`, {
+      const response = await fetch(`/api/events/${params?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

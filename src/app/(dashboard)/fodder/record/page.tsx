@@ -26,9 +26,8 @@ export default function Page() {
       <Header pageName={pageName} username={session.user?.name ?? ""} />
       <div className="flex flex-row justify-between items-center mb-4">
         <FodderList />
-        <AddButton path="fodder/record" />
       </div>
-
+      <AddButton path="fodder/record" />
       <RecordList />
       <Footer />
     </div>

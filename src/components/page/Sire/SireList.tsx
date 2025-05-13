@@ -1,6 +1,6 @@
 import { Table, Button, Spinner, Card, Badge } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import { NotepadText } from "lucide-react";
+import { ChevronDown, ChevronUp, NotepadText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StockTypeMap from "@/models/StockTypeMap";
 import { DeleteButton } from "@/components/shared/buttons/deleteButton";
@@ -11,6 +11,23 @@ export default function SireList() {
   const [sireRecords, setSireRecords] = useState<SireRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+  const options = [
+    { value: "sheep", label: "Хонь" },
+    { value: "goat", label: "Ямаа" },
+    { value: "cattle", label: "Үхэр" },
+    { value: "horse", label: "Адуу" },
+    { value: "camel", label: "Тэмээ" },
+  ];
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const handleSelect = (option: { value: string; label: string }) => {
+    setSelectedOption(option.value); // Use the `value` for filtering
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,11 +99,62 @@ export default function SireList() {
     );
   }
 
+  // Filter records based on the selected stock type
+  const filteredRecords = selectedOption
+    ? sireRecords.filter(
+        (record) => record.stock?.stock_type === selectedOption
+      )
+    : sireRecords;
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-row justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-800">Бүртгэл</h2>
+          <div id="dropdown">
+            <div className="relative w-48">
+              <button
+                type="button"
+                className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={toggleDropdown}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+              >
+                {selectedOption
+                  ? options.find((opt) => opt.value === selectedOption)?.label
+                  : "Мал сонгох..."}
+                {isOpen ? (
+                  <ChevronUp className="w-5 h-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                )}
+              </button>
+
+              {isOpen && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                  <ul
+                    role="listbox"
+                    className="py-1 overflow-auto text-base rounded-md max-h-60 focus:outline-none"
+                  >
+                    {options.map((option) => (
+                      <li
+                        key={option.value}
+                        className="relative px-4 py-2 text-gray-900 cursor-default select-none hover:bg-blue-50 hover:text-blue-700"
+                        defaultValue={options[0].value}
+                        onClick={() => handleSelect(option)}
+                      >
+                        <div className="flex items-center">
+                          <span className="ml-2 block truncate">
+                            {option.label}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -114,7 +182,7 @@ export default function SireList() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {sireRecords.map((record, index) => (
+              {filteredRecords.map((record, index) => (
                 <tr
                   key={record.id}
                   className={index % 2 === 1 ? "bg-gray-50" : "bg-white"}

@@ -7,7 +7,6 @@ import { DeleteButton } from "@/components/shared/buttons/deleteButton";
 import { EditButton } from "@/components/shared/buttons/editButton";
 import { MedicalRecord } from "@/models/MedicalRecord";
 export default function TreatmentList() {
-  const router = useRouter();
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +20,9 @@ export default function TreatmentList() {
         const response = await fetch("/api/treatments");
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Unknown error occurred" }));
           throw new Error(
             errorData.error ||
               `Server returned ${response.status}: ${response.statusText}`
@@ -147,11 +148,16 @@ export default function TreatmentList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex gap-3">
-                      <EditButton id={record.id} path="treatment" />
+                      <EditButton
+                        id={record.id}
+                        path="treatment"
+                        aria-label="Edit treatment"
+                      />
                       <DeleteButton
                         id={record.id}
                         endpoint="treatments"
                         itemName="энэ эмчилгээ"
+                        aria-label="Delete treatment"
                       />
                     </div>
                   </td>

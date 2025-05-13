@@ -107,9 +107,9 @@ const WeatherChart = ({ data }: { data: WeatherData }) => {
         </div>
         <div className="flex items-center gap-1 text-sm opacity-90">
           <Calendar size={16} />
-          {new Date().toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
+          {new Date().toLocaleDateString("mn-MN", {
+            weekday: "long", // "Даваа", "Мягмар" (full names)
+            month: "long", // "Нэгдүгээр сар", "Тавдугаар сар"
             day: "numeric",
           })}
         </div>
